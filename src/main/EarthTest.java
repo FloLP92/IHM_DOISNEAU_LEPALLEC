@@ -1,17 +1,8 @@
 package main;
 
-import java.awt.Frame;
-import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Vector;
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.input.ChaseCamera;
@@ -26,9 +17,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
-import com.jme3.system.AppSettings;
-
-import main.CubesTest;
 
 public class EarthTest extends SimpleApplication {
 
@@ -85,19 +73,20 @@ public class EarthTest extends SimpleApplication {
 					Line line = new Line(oldVect, newVect);
 					Geometry lineGeo = new Geometry("lineGeo", line);
 					Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
-					mat.getAdditionalRenderState().setLineWidth(20.0f);
+					mat.getAdditionalRenderState().setLineWidth(4.0f);
 					mat.setColor("Color", ColorRGBA.Red);
 					lineGeo.setMaterial(mat);
 					float altitude = rf.get(i).getAltitude();
-					lineGeo.setLocalTranslation(0.0f,0.0f,altitude/10);
+					lineGeo.setLocalTranslation(0.0f,0.0f,altitude/80);
 					LinesNode.setMaterial(mat);
 					LinesNode.attachChild(lineGeo);
 					rootNode.attachChild(LinesNode);
 					oldVect = newVect;
 					MainSystem.addVector(f.getId()+"   ",newVect);
+					
 					planeSpatial.setLocalTranslation(newVect);
 					planeSpatial.setLocalScale(0.2f);
-					rootNode.attachChild(planeSpatial);
+					SpheresNode.attachChild(planeSpatial);
 				}
 			}
 			compteur++;
@@ -180,7 +169,6 @@ public class EarthTest extends SimpleApplication {
 	private void displayTown(float latitude, float longitude)
 	{
 		Sphere sphere = new Sphere(16,8,0.002f);
-		//Geometry town = new Geometry("Town",sphere);
 		Geometry sphereGeo = new Geometry("lineGeo", sphere);
 		Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
 		mat.getAdditionalRenderState().setLineWidth(4.0f);
@@ -189,25 +177,6 @@ public class EarthTest extends SimpleApplication {
 		Vector3f v = geoCoordTo3dCoord(latitude,longitude);
 		sphereGeo.setLocalTranslation(v);
 		SpheresNode.setMaterial(mat);
-		SpheresNode.attachChild(sphereGeo);
-		
-		
+		SpheresNode.attachChild(sphereGeo);	
 	}
-/*
-	public static void main(String[] args) 
-	{
-		AppSettings settings = new AppSettings(true);
-		settings.setResolution(1200, 800);
-		settings.setSamples(8);
-		settings.setFrameRate(60);
-		settings.setVSync(true);
-		
-		earthTest app = new earthTest();
-		app.setSettings(settings);
-		app.setShowSettings(false);
-		app.setDisplayStatView(false);
-		app.setDisplayFps(false);
-		app.start();
-	}*/
-
 }
