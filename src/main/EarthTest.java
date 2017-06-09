@@ -2,6 +2,7 @@ package main;
 
 import java.awt.Frame;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JFrame;
@@ -53,14 +54,10 @@ public class EarthTest extends SimpleApplication {
 		{
 			displayTown(value.getLatitude(),value.getLongitude());  
 		}
+		int compteur = 0;
 		for(Flight f : MainSystem.getListFlight().values())
 		{
 			Airport airportDepart = f.getAirportDepart();
-			
-			float chLat = airportDepart.getLatitude();
-			float chLong = airportDepart.getLongitude();
-			float chAlt = 3f;
-			//Point depart = new Point(chLat,chLong);
 			Spatial planeSpatial = assetManager.loadModel("earth/plane.obj");
 			
 			Material matPlane = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
@@ -68,20 +65,22 @@ public class EarthTest extends SimpleApplication {
 			matPlane.setColor("Color", ColorRGBA.Red);
 			planeSpatial.setMaterial(matPlane);
 			
-			Vector3f oldVect = geoCoordTo3dCoord(chLat,chLong);
-			//System.out.println(f.getId());
-			if(MainSystem.getRealTimeFlight().containsKey(f.getId()))
+			if(MainSystem.getRealTimeFlight().containsKey(f.getId()+"   "))
 			{
-				for(int i=0;i<MainSystem.getRealTimeFlight().get(f.getId()).size();i++)
+				ArrayList<RealTimeFlight> rf = MainSystem.getRealTimeFlight().get(f.getId()+"   ");
+				float chLat,chLong;
+				Vector3f oldVect=null;
+				for(int i=1;i< rf.size();i++)
 				{
-					
-					System.out.println("a");
-					//float t=i/5.0f;
-					//Vector3f newVect = new Vector3f(FastMath.cos(t),t/5.0f,FastMath.sin(t));
-					chLat = MainSystem.getRealTimeFlight()
-							.get(f.getId()).get(i).getLatitude();
-					chLong = MainSystem.getRealTimeFlight()
-							.get(f.getId()).get(i).getLongitude();
+					if(i == 1)
+					{
+						chLat = rf.get(0).getLatitude();
+						chLong = rf.get(0).getLongitude();
+						oldVect = geoCoordTo3dCoord(chLat,chLong);
+						MainSystem.addVector(f.getId()+"   ",oldVect);
+					}
+					chLat = rf.get(i).getLatitude();
+					chLong = rf.get(i).getLongitude();
 					Vector3f newVect = geoCoordTo3dCoord(chLat,chLong);
 					Line line = new Line(oldVect, newVect);
 					Geometry lineGeo = new Geometry("lineGeo", line);
@@ -89,15 +88,21 @@ public class EarthTest extends SimpleApplication {
 					mat.getAdditionalRenderState().setLineWidth(20.0f);
 					mat.setColor("Color", ColorRGBA.Red);
 					lineGeo.setMaterial(mat);
-					lineGeo.setLocalTranslation(0.0f,0.0f,8.0f);
+					float altitude = rf.get(i).getAltitude();
+					lineGeo.setLocalTranslation(0.0f,0.0f,altitude/10);
 					LinesNode.setMaterial(mat);
 					LinesNode.attachChild(lineGeo);
 					rootNode.attachChild(LinesNode);
 					oldVect = newVect;
+					MainSystem.addVector(f.getId()+"   ",newVect);
+					planeSpatial.setLocalTranslation(newVect);
+					planeSpatial.setLocalScale(0.2f);
+					rootNode.attachChild(planeSpatial);
 				}
 			}
-			//planeSpatial.setLocalTranslation(v);
-			
+			compteur++;
+			if (compteur == 15)
+					break;
 		}
 		
 		
@@ -148,15 +153,15 @@ public class EarthTest extends SimpleApplication {
 		}*/
 		
 		
-		DirectionalLight directionalLight = new DirectionalLight(new Vector3f(-2,-10,1));
-		directionalLight.setColor(ColorRGBA.White.mult(1.3f));
+		DirectionalLight directionalLight = new DirectionalLight(new Vector3f(-2,-10,4));
+		directionalLight.setColor(ColorRGBA.White.mult(1.7f));
 		rootNode.addLight(directionalLight);
 		viewPort.setBackgroundColor(new ColorRGBA(0.1f,0.1f,0.1f,1.0f));
 		flyCam.setEnabled(false);
 		ChaseCamera chaseCam = new ChaseCamera(cam,earth_geom,inputManager);
 		chaseCam.setDragToRotate(true);
 		chaseCam.setInvertVerticalAxis(true);
-		chaseCam.setRotationSpeed(10.0f);;
+		chaseCam.setRotationSpeed(10.0f);
 		chaseCam.setMinVerticalRotation((float)-(Math.PI/2 - 0.0001f));
 		chaseCam.setMaxVerticalRotation((float)-Math.PI/2);
 		chaseCam.setMaxDistance(30.0f);

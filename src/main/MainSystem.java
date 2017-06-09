@@ -31,6 +31,7 @@ import javax.swing.table.TableColumn;
 
 import main.Flight;
 import com.jme3.math.Plane;
+import com.jme3.math.Vector3f;
 import com.jme3.system.AppSettings;
 import com.jme3.system.JmeCanvasContext;
 
@@ -40,6 +41,7 @@ public class MainSystem
 	private static HashMap<String,Flight> listFlights;
 	private static HashMap<String,Pays> listPays;
 	private static HashMap<String,ArrayList<RealTimeFlight>> realTimeFlight;
+	private static HashMap<String,ArrayList<Vector3f>> listVectors;
 	private static JFrame frame;
 	private static JPanel panel;
 	private static EarthTest app;
@@ -52,6 +54,8 @@ public class MainSystem
 		listFlights = new HashMap<String,Flight>();
 		listPays = new HashMap<String,Pays>();
 		realTimeFlight = new HashMap<String,ArrayList<RealTimeFlight>>();
+		listVectors = new HashMap<String,ArrayList<Vector3f>>();
+
 		
 		MainSystem.lireFichier("ressources/airports.dat");
 		MainSystem.lireFichier("ressources/flights.dat");
@@ -312,8 +316,22 @@ public class MainSystem
 			ArrayList<RealTimeFlight> a = new ArrayList<RealTimeFlight>();
 			a.add(r);
 			realTimeFlight.put(id,a);
-		}
-			
+		}	
+	}
+	public static void addVector(String id,Vector3f v)
+	{
+		if(listVectors.containsKey(id))
+			listVectors.get(id).add(v);
+		else
+		{
+			ArrayList<Vector3f> a = new ArrayList<Vector3f>();
+			a.add(v);
+			listVectors.put(id,a);
+		}	
+	}
+	public static HashMap<String,ArrayList<Vector3f>> getListVectors()
+	{
+		return listVectors;
 	}
 	public static void main(String[] args) throws IOException
 	{
