@@ -5,6 +5,8 @@ import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
@@ -17,11 +19,16 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.table.TableColumn;
+
 import main.Flight;
 import com.jme3.math.Plane;
 import com.jme3.system.AppSettings;
@@ -147,7 +154,28 @@ public class MainSystem
 			}
 		});
 		
-		panel.add(new JButton("Swing Components"), BorderLayout.WEST);
+		
+		//Partie 2D de gauche
+	    JTable table = new JTable();
+	    TableColumn t =new TableColumn();
+	    table.addColumn(new TableColumn());
+	    table.add(new JButton("hello world"));
+        Object[][] donnees = {
+                {"Johnathan", "Sykes","red", true, "TENNIS"},
+                {"Nicolas", "Van de Kampf", "black", true, "FOOTBALL"},
+                {"Damien", "Cuthbert", "cyan", true, "RIEN"},
+                {"Corinne", "Valance", "blue", false, "NATATION"},
+                {"Emilie", "Schrödinger", "magenta", false, "FOOTBALL"},
+                {"Delphine", "Duke", "yellow", false, "TENNIS"},
+                {"Eric", "Trump", "pink", true, "FOOTBALL"},
+        };
+        
+ 
+        String[] entetes = {"Prénom", "Nom", "Couleur favorite", "Homme", "Sport"};
+ 
+        JTable tableau = new JTable(donnees, entetes);
+	    JScrollPane scrollPane = new JScrollPane(tableau);
+		panel.add(scrollPane, BorderLayout.WEST);
 		
 		// Add the canvas to the panel
 		panel.add(canvas, BorderLayout.CENTER);
