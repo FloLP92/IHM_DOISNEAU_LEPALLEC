@@ -110,11 +110,6 @@ public class RealTimeFlight
 				}
 				line = bufRead.readLine();
 				compteur++;
-				if(parts[1].compareTo("DLH94T")==0)
-				{
-					System.out.println("bb"+parts[1]);
-
-				}
 				if(!parts[9].equals("null"))
 				{
 				
@@ -142,5 +137,9 @@ public class RealTimeFlight
 	public float getLongitude()
 	{
 		return longitude;
+	}
+	public float getAltitude()
+	{
+		return altitude;
 	}
 }
