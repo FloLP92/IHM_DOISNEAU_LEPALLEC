@@ -46,12 +46,12 @@ public class EarthTest extends SimpleApplication {
 		for(Flight f : MainSystem.getListFlight().values())
 		{
 			Airport airportDepart = f.getAirportDepart();
-			Spatial planeSpatial = assetManager.loadModel("earth/plane.obj");
+			
 			
 			Material matPlane = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
 			matPlane.getAdditionalRenderState().setLineWidth(4.0f);
 			matPlane.setColor("Color", ColorRGBA.Red);
-			planeSpatial.setMaterial(matPlane);
+			
 			
 			if(MainSystem.getRealTimeFlight().containsKey(f.getId()+"   "))
 			{
@@ -76,22 +76,33 @@ public class EarthTest extends SimpleApplication {
 					mat.getAdditionalRenderState().setLineWidth(4.0f);
 					mat.setColor("Color", ColorRGBA.Red);
 					lineGeo.setMaterial(mat);
-					float altitude = rf.get(i).getAltitude();
-					lineGeo.setLocalTranslation(0.0f,0.0f,altitude/80);
+					//float altitude = rf.get(i).getAltitude();
+					//lineGeo.setLocalTranslation(0.0f,0.0f,altitude/80);
+					lineGeo.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
+					lineGeo.setLocalTranslation(0,0,3);
+					
+					/*
+					objet orienté pariel que le monde
+					lookAt pour s aligner regarder l aterre
+					si on fais avancer reculer que altitude qui va changer*/
+					
 					LinesNode.setMaterial(mat);
 					LinesNode.attachChild(lineGeo);
 					rootNode.attachChild(LinesNode);
 					oldVect = newVect;
 					MainSystem.addVector(f.getId()+"   ",newVect);
+					Spatial planeSpatial = assetManager.loadModel("earth/plane.obj");
+					planeSpatial.setMaterial(matPlane);
+					planeSpatial.move(newVect);
+					//planeSpatial.setLocalTranslation(newVect);
+					planeSpatial.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
+					//planeSpatial.setLocalTranslation(0,0,3);
 					
-					planeSpatial.setLocalTranslation(newVect);
-					planeSpatial.setLocalScale(0.2f);
+					planeSpatial.setLocalScale(0.03f);
 					SpheresNode.attachChild(planeSpatial);
 				}
 			}
 			compteur++;
-			if (compteur == 15)
-					break;
 		}
 		
 		
