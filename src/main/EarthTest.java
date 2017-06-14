@@ -79,7 +79,8 @@ public class EarthTest extends SimpleApplication {
 					//float altitude = rf.get(i).getAltitude();
 					//lineGeo.setLocalTranslation(0.0f,0.0f,altitude/80);
 					lineGeo.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
-					lineGeo.setLocalTranslation(0,0,3);
+					
+					
 					
 					/*
 					objet orienté pariel que le monde
@@ -96,10 +97,13 @@ public class EarthTest extends SimpleApplication {
 					planeSpatial.move(newVect);
 					//planeSpatial.setLocalTranslation(newVect);
 					planeSpatial.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
-					//planeSpatial.setLocalTranslation(0,0,3);
-					
+					Vector3f w = new Vector3f(0,0,3);
+					planeSpatial.setLocalTranslation(planeSpatial
+							.getLocalTranslation().add(w));
+					planeSpatial.rotate(0,(float)Math.PI/2,0);
+					//planeSpatial.setLocalTranslation(0,0,+1);
 					planeSpatial.setLocalScale(0.03f);
-					SpheresNode.attachChild(planeSpatial);
+					SpheresNode.attachChild(planeSpatial);					
 				}
 			}
 			compteur++;
