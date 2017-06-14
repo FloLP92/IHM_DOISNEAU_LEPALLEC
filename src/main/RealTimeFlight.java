@@ -63,8 +63,7 @@ public class RealTimeFlight
 				//time part
 				Timestamp t1 = new Timestamp(Long.parseLong(parts[0])*1);
 				Date time = new Date(t1.getTime());
-				//on continue a lire
-				if( (time != lastDate)&&(!boolDate) )
+				if( (time != lastDate)&&(!boolDate) )//on continue a lire
 				{
 					boolDate = true;
 					continue;
@@ -210,5 +209,9 @@ public class RealTimeFlight
 	public void getSpatial(Spatial chSpatial)
 	{
 		plane = chSpatial;
+	}
+	public static void enableRead()
+	{
+		boolDate = false;
 	}
 }

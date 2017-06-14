@@ -38,6 +38,12 @@ public class EarthTest extends SimpleApplication {
 	@Override
 	public void simpleInitApp() 
 	{
+		final JMenuBar menubar = new JMenuBar();
+		final JMenu objectsMenu = new JMenu("File");
+		final JMenu helpMenu = new JMenu("Help");
+		menubar.add(objectsMenu);
+		menubar.add(helpMenu);
+		
 		LinesNode = new Node("LinesNode");
 		SpheresNode = new Node("SpheresNode");
 		assetManager.registerLocator("earth.zip", ZipLocator.class);
@@ -46,6 +52,21 @@ public class EarthTest extends SimpleApplication {
 		earth_node.attachChild(earth_geom);
 		//earth_node.setLocalScale(5.0f);
 		rootNode.attachChild(earth_node);
+		
+		DirectionalLight directionalLight = new DirectionalLight(new Vector3f(-2,-10,4));
+		directionalLight.setColor(ColorRGBA.White.mult(1.7f));
+		rootNode.addLight(directionalLight);
+		viewPort.setBackgroundColor(new ColorRGBA(0.1f,0.1f,0.1f,1.0f));
+		flyCam.setEnabled(false);
+		ChaseCamera chaseCam = new ChaseCamera(cam,earth_geom,inputManager);
+		chaseCam.setDragToRotate(true);
+		chaseCam.setInvertVerticalAxis(true);
+		chaseCam.setRotationSpeed(10.0f);
+		chaseCam.setMinVerticalRotation((float)-(Math.PI/2 - 0.0001f));
+		chaseCam.setMaxVerticalRotation((float)-Math.PI/2);
+		chaseCam.setMaxDistance(30.0f);
+		
+		
 		
 		//-------------------AFFICHAGE AEROPORTS--------------------------
 		for (Airport value : MainSystem.getListAirports().values()) 
@@ -56,7 +77,7 @@ public class EarthTest extends SimpleApplication {
 
 		//-------------------INITIALISATION AVIONS--------------------------
 		listPlanes = new ArrayList<Spatial>();
-		for ( int i=0; i<MainSystem.getListAirports().size(); i++ ) 
+		for ( int i=0; i<MainSystem.getListFlight().size(); i++ ) 
 		{
 			Spatial planeSpatial = assetManager.loadModel("earth/plane.obj");
 			listPlanes.add(planeSpatial);
@@ -66,16 +87,16 @@ public class EarthTest extends SimpleApplication {
 		
 		HashMap<String,RealTimeFlight> rf = MainSystem.getRealTimeFlight();
 		float chLat,chLong;
-		int pos = 0;
 		/*
 		objet orienté pariel que le monde
 		lookAt pour s aligner regarder l aterre
 		si on fais avancer reculer que altitude qui va changer*/
-		while( updatePositions() )
+		while( !updatePositions() )
 		{
+			int pos = 0;
+			RealTimeFlight.enableRead();
 			for( RealTimeFlight r : MainSystem.getRealTimeFlight().values() )
 			{	
-				System.out.println("aaaa");
 				Vector3f oldVect=null;
 				Spatial s = listPlanes.get(pos);
 				if(!SpheresNode.hasChild(s))
@@ -106,24 +127,17 @@ public class EarthTest extends SimpleApplication {
 				}
 				SpheresNode.attachChild(s);	
 				pos++;
-				
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
+			/*
+			try {
+				Thread.sleep(4000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			*/
 		}
-	
 		
-		
-		
-		final JMenuBar menubar = new JMenuBar();
-		final JMenu objectsMenu = new JMenu("File");
-		final JMenu helpMenu = new JMenu("Help");
-		menubar.add(objectsMenu);
-		menubar.add(helpMenu);
 		//Frame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this);
 		//frame.setJMenuBar(menubar);
 		
@@ -164,20 +178,6 @@ public class EarthTest extends SimpleApplication {
 			rootNode.attachChild(LinesNode);
 			oldVect = newVect;
 		}*/
-		
-		
-		DirectionalLight directionalLight = new DirectionalLight(new Vector3f(-2,-10,4));
-		directionalLight.setColor(ColorRGBA.White.mult(1.7f));
-		rootNode.addLight(directionalLight);
-		viewPort.setBackgroundColor(new ColorRGBA(0.1f,0.1f,0.1f,1.0f));
-		flyCam.setEnabled(false);
-		ChaseCamera chaseCam = new ChaseCamera(cam,earth_geom,inputManager);
-		chaseCam.setDragToRotate(true);
-		chaseCam.setInvertVerticalAxis(true);
-		chaseCam.setRotationSpeed(10.0f);
-		chaseCam.setMinVerticalRotation((float)-(Math.PI/2 - 0.0001f));
-		chaseCam.setMaxVerticalRotation((float)-Math.PI/2);
-		chaseCam.setMaxDistance(30.0f);
 
 	}
 	private static Vector3f geoCoordTo3dCoord(float lat, float lon)
