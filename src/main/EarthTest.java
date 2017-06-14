@@ -1,6 +1,8 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import com.jme3.app.SimpleApplication;
@@ -26,6 +28,7 @@ public class EarthTest extends SimpleApplication {
 	Node LinesNode;
 	Node SpheresNode;
 	private static Plane plane;
+	private static ArrayList<Spatial> listPlanes;
 
 	@Override
 	public void simpleInitApp() 
@@ -38,76 +41,81 @@ public class EarthTest extends SimpleApplication {
 		earth_node.attachChild(earth_geom);
 		//earth_node.setLocalScale(5.0f);
 		rootNode.attachChild(earth_node);
+		
+		//-------------------AFFICHAGE AEROPORTS--------------------------
 		for (Airport value : MainSystem.getListAirports().values()) 
 		{
 			displayTown(value.getLatitude(),value.getLongitude());  
 		}
-		int compteur = 0;
-		for(Flight f : MainSystem.getListFlight().values())
+		//-----------------------------------------------------------------
+
+		//-------------------INITIALISATION AVIONS--------------------------
+		listPlanes = new ArrayList<Spatial>();
+		for ( int i=0; i<MainSystem.getListAirports().size(); i++ ) 
 		{
-			Airport airportDepart = f.getAirportDepart();
-			
-			
-			Material matPlane = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
-			matPlane.getAdditionalRenderState().setLineWidth(4.0f);
-			matPlane.setColor("Color", ColorRGBA.Red);
-			
-			
-			if(MainSystem.getRealTimeFlight().containsKey(f.getId()+"   "))
-			{
-				ArrayList<RealTimeFlight> rf = MainSystem.getRealTimeFlight().get(f.getId()+"   ");
-				float chLat,chLong;
-				Vector3f oldVect=null;
-				for(int i=1;i< rf.size();i++)
-				{
-					if(i == 1)
-					{
-						chLat = rf.get(0).getLatitude();
-						chLong = rf.get(0).getLongitude();
-						oldVect = geoCoordTo3dCoord(chLat,chLong);
-						MainSystem.addVector(f.getId()+"   ",oldVect);
-					}
-					chLat = rf.get(i).getLatitude();
-					chLong = rf.get(i).getLongitude();
-					Vector3f newVect = geoCoordTo3dCoord(chLat,chLong);
-					Line line = new Line(oldVect, newVect);
-					Geometry lineGeo = new Geometry("lineGeo", line);
-					Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
-					mat.getAdditionalRenderState().setLineWidth(4.0f);
-					mat.setColor("Color", ColorRGBA.Red);
-					lineGeo.setMaterial(mat);
-					//float altitude = rf.get(i).getAltitude();
-					//lineGeo.setLocalTranslation(0.0f,0.0f,altitude/80);
-					lineGeo.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
-					
-					
-					
-					/*
-					objet orienté pariel que le monde
-					lookAt pour s aligner regarder l aterre
-					si on fais avancer reculer que altitude qui va changer*/
-					
-					LinesNode.setMaterial(mat);
-					LinesNode.attachChild(lineGeo);
-					rootNode.attachChild(LinesNode);
-					oldVect = newVect;
-					MainSystem.addVector(f.getId()+"   ",newVect);
-					Spatial planeSpatial = assetManager.loadModel("earth/plane.obj");
-					planeSpatial.setMaterial(matPlane);
-					planeSpatial.move(newVect);
-					//planeSpatial.setLocalTranslation(newVect);
-					planeSpatial.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
-					Vector3f w = new Vector3f(0,0,3);
-					planeSpatial.setLocalTranslation(planeSpatial
-							.getLocalTranslation().add(w));
-					planeSpatial.rotate(0,(float)Math.PI/2,0);
-					//planeSpatial.setLocalTranslation(0,0,+1);
-					planeSpatial.setLocalScale(0.03f);
-					SpheresNode.attachChild(planeSpatial);					
-				}
-			}
-			compteur++;
+			Spatial planeSpatial = assetManager.loadModel("earth/plane.obj");
+			listPlanes.add(planeSpatial);
 		}
+		//-----------------------------------------------------------------
+		
+		Material matPlane = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
+		matPlane.getAdditionalRenderState().setLineWidth(4.0f);
+		matPlane.setColor("Color", ColorRGBA.Red);
+		
+		for( RealTimeFlight r : MainSystem.getRealTimeFlight().values() )
+		{
+			HashMap<String,RealTimeFlight> rf = MainSystem.getRealTimeFlight();
+			float chLat,chLong;
+			Vector3f oldVect=null;
+			for(int i=1;i< rf.values().size();i++)
+			{
+				if(i == 1)
+				{
+					chLat = rf.get(0).getLatitude();
+					chLong = rf.get(0).getLongitude();
+					oldVect = geoCoordTo3dCoord(chLat,chLong);
+					MainSystem.addVector(f.getId()+"   ",oldVect);
+				}
+				chLat = rf.get(i).getLatitude();
+				chLong = rf.get(i).getLongitude();
+				Vector3f newVect = geoCoordTo3dCoord(chLat,chLong);
+				Line line = new Line(oldVect, newVect);
+				Geometry lineGeo = new Geometry("lineGeo", line);
+				Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
+				mat.getAdditionalRenderState().setLineWidth(4.0f);
+				mat.setColor("Color", ColorRGBA.Red);
+				lineGeo.setMaterial(mat);
+				//float altitude = rf.get(i).getAltitude();
+				//lineGeo.setLocalTranslation(0.0f,0.0f,altitude/80);
+				lineGeo.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
+				
+				
+				
+				/*
+				objet orienté pariel que le monde
+				lookAt pour s aligner regarder l aterre
+				si on fais avancer reculer que altitude qui va changer*/
+				
+				LinesNode.setMaterial(mat);
+				LinesNode.attachChild(lineGeo);
+				rootNode.attachChild(LinesNode);
+				oldVect = newVect;
+				MainSystem.addVector(f.getId()+"   ",newVect);
+				Spatial planeSpatial = assetManager.loadModel("earth/plane.obj");
+				planeSpatial.setMaterial(matPlane);
+				planeSpatial.move(newVect);
+				//planeSpatial.setLocalTranslation(newVect);
+				planeSpatial.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
+				Vector3f w = new Vector3f(0,0,3);
+				planeSpatial.setLocalTranslation(planeSpatial
+						.getLocalTranslation().add(w));
+				planeSpatial.rotate(0,(float)Math.PI/2,0);
+				//planeSpatial.setLocalTranslation(0,0,+1);
+				planeSpatial.setLocalScale(0.03f);
+				SpheresNode.attachChild(planeSpatial);					
+			}
+		}
+		
 		
 		
 		final JMenuBar menubar = new JMenuBar();

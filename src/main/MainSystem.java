@@ -40,7 +40,7 @@ public class MainSystem
 	private static HashMap<String,Airport> listAirports;
 	private static HashMap<String,Flight> listFlights;
 	private static HashMap<String,Pays> listPays;
-	private static HashMap<String,ArrayList<RealTimeFlight>> realTimeFlight;
+	private static HashMap<String,RealTimeFlight> realTimeFlight;
 	private static HashMap<String,ArrayList<Vector3f>> listVectors;
 	private static JFrame frame;
 	private static JPanel panel;
@@ -53,7 +53,7 @@ public class MainSystem
 		listAirports = new HashMap<String,Airport>();
 		listFlights = new HashMap<String,Flight>();
 		listPays = new HashMap<String,Pays>();
-		realTimeFlight = new HashMap<String,ArrayList<RealTimeFlight>>();
+		realTimeFlight = new HashMap<String,RealTimeFlight>();
 		listVectors = new HashMap<String,ArrayList<Vector3f>>();
 
 		
@@ -303,20 +303,13 @@ public class MainSystem
 			e.printStackTrace();
 		}	
 	}
-	public static HashMap<String,ArrayList<RealTimeFlight>> getRealTimeFlight()
+	public static HashMap<String,RealTimeFlight> getRealTimeFlight()
 	{
 		return realTimeFlight;
 	}
 	public static void updateRealTimeFlight(String id,RealTimeFlight r)
 	{
-		if(realTimeFlight.containsKey(id))
-			realTimeFlight.get(id).add(r);
-		else
-		{
-			ArrayList<RealTimeFlight> a = new ArrayList<RealTimeFlight>();
-			a.add(r);
-			realTimeFlight.put(id,a);
-		}	
+			realTimeFlight.put(id,r);
 	}
 	public static void addVector(String id,Vector3f v)
 	{
