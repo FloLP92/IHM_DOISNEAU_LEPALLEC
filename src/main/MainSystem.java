@@ -59,10 +59,6 @@ public class MainSystem
 		
 		MainSystem.lireFichier("ressources/airports.dat");
 		MainSystem.lireFichier("ressources/flights.dat");
-		System.out.println(listAirports.size());
-		System.out.println(listFlights.size());
-		//RealTimeFlight r = new RealTimeFlight(50,"",50, 50, 50, 50, 50,50, "",true);
-		//r.affichagePositionsAvions();
 		
 		AppSettings settings = new AppSettings(true);
 		settings.setResolution(1200, 800);
@@ -75,7 +71,6 @@ public class MainSystem
 		app.setDisplayStatView(false);
 		app.setDisplayFps(false);
 						
-		//canvasApplication = new earthTest();
 		app.setPauseOnLostFocus(false);
 		app.createCanvas(); // create canvas!
 		JmeCanvasContext ctx = (JmeCanvasContext) app.getContext();
@@ -83,13 +78,6 @@ public class MainSystem
 		Dimension dim = new Dimension(settings.getWidth(), settings.getHeight());
 		canvas.setPreferredSize(dim);
 		createNewJFrame();
-		/*
-		earthTest app = new earthTest();
-		app.setSettings(settings);
-		app.setShowSettings(false);
-		app.setDisplayStatView(false);
-		app.setDisplayFps(false);
-		app.start();*/
 	}
 	private static void createNewJFrame() {
 
@@ -329,8 +317,6 @@ public class MainSystem
 	public static void main(String[] args) throws IOException
 	{
 		new MainSystem();
-		RealTimeFlight r = null;
-		r.affichagePositionsAvions();
 	}
 	
 	

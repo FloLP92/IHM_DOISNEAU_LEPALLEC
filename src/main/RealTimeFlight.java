@@ -49,7 +49,7 @@ public class RealTimeFlight
 		positionSol = chPos;
 	}
 	
-	public static void affichagePositionsAvions() throws IOException{
+	public static boolean affichagePositionsAvions() throws IOException{
 		try {
 			FileReader file = new FileReader("ressources/realtime_flights.dat");
 			bufRead = new BufferedReader(file);
@@ -169,11 +169,19 @@ public class RealTimeFlight
 				}
 				
 			}
-			
+			if(line==null)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}		
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return false;
 	}
 	public float getLatitude()
 	{

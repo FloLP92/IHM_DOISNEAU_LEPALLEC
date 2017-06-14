@@ -1,7 +1,9 @@
 package main;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -29,6 +31,9 @@ public class EarthTest extends SimpleApplication {
 	Node SpheresNode;
 	private static Plane plane;
 	private static ArrayList<Spatial> listPlanes;
+	private static final ColorRGBA tabColor[] = {ColorRGBA.Red,ColorRGBA.Blue,ColorRGBA.Pink,
+			ColorRGBA.Yellow,ColorRGBA.Gray,ColorRGBA.Cyan,ColorRGBA.Black,ColorRGBA.Magenta,
+			ColorRGBA.Orange,ColorRGBA.White,ColorRGBA.Green,ColorRGBA.BlackNoAlpha};
 
 	@Override
 	public void simpleInitApp() 
@@ -58,63 +63,59 @@ public class EarthTest extends SimpleApplication {
 		}
 		//-----------------------------------------------------------------
 		
-		Material matPlane = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
-		matPlane.getAdditionalRenderState().setLineWidth(4.0f);
-		matPlane.setColor("Color", ColorRGBA.Red);
 		
-		for( RealTimeFlight r : MainSystem.getRealTimeFlight().values() )
+		HashMap<String,RealTimeFlight> rf = MainSystem.getRealTimeFlight();
+		float chLat,chLong;
+		int pos = 0;
+		/*
+		objet orienté pariel que le monde
+		lookAt pour s aligner regarder l aterre
+		si on fais avancer reculer que altitude qui va changer*/
+		while( updatePositions() )
 		{
-			HashMap<String,RealTimeFlight> rf = MainSystem.getRealTimeFlight();
-			float chLat,chLong;
-			Vector3f oldVect=null;
-			for(int i=1;i< rf.values().size();i++)
-			{
-				if(i == 1)
+			for( RealTimeFlight r : MainSystem.getRealTimeFlight().values() )
+			{	
+				System.out.println("aaaa");
+				Vector3f oldVect=null;
+				Spatial s = listPlanes.get(pos);
+				if(!SpheresNode.hasChild(s))
 				{
-					chLat = rf.get(0).getLatitude();
-					chLong = rf.get(0).getLongitude();
+					chLat = r.getLatitude();
+					chLong = r.getLongitude();
 					oldVect = geoCoordTo3dCoord(chLat,chLong);
-					MainSystem.addVector(f.getId()+"   ",oldVect);
+					Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
+					mat.getAdditionalRenderState().setLineWidth(4.0f);
+					mat.setColor("Color", tabColor[randBetween(0, 11)]);
+					s.setLocalScale(0.03f);
+					s.setMaterial(mat);
+					s.move(oldVect);
+					s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
+					Vector3f w = new Vector3f(0,0,3);
+					//s.setLocalTranslation(s.getLocalTranslation().add(w));
+					s.rotate(0,(float)Math.PI/2,0);
+					//planeSpatial.setLocalTranslation(0,0,+1);
 				}
-				chLat = rf.get(i).getLatitude();
-				chLong = rf.get(i).getLongitude();
-				Vector3f newVect = geoCoordTo3dCoord(chLat,chLong);
-				Line line = new Line(oldVect, newVect);
-				Geometry lineGeo = new Geometry("lineGeo", line);
-				Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
-				mat.getAdditionalRenderState().setLineWidth(4.0f);
-				mat.setColor("Color", ColorRGBA.Red);
-				lineGeo.setMaterial(mat);
-				//float altitude = rf.get(i).getAltitude();
-				//lineGeo.setLocalTranslation(0.0f,0.0f,altitude/80);
-				lineGeo.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
+				else
+				{
+					SpheresNode.detachChild(s); //on enleve avion
+					chLat = r.getLatitude();
+					chLong = r.getLongitude();
+					Vector3f newVect = geoCoordTo3dCoord(chLat,chLong);	
+					oldVect = newVect;				
+					//planeSpatial.setLocalTranslation(newVect);
+				}
+				SpheresNode.attachChild(s);	
+				pos++;
 				
-				
-				
-				/*
-				objet orienté pariel que le monde
-				lookAt pour s aligner regarder l aterre
-				si on fais avancer reculer que altitude qui va changer*/
-				
-				LinesNode.setMaterial(mat);
-				LinesNode.attachChild(lineGeo);
-				rootNode.attachChild(LinesNode);
-				oldVect = newVect;
-				MainSystem.addVector(f.getId()+"   ",newVect);
-				Spatial planeSpatial = assetManager.loadModel("earth/plane.obj");
-				planeSpatial.setMaterial(matPlane);
-				planeSpatial.move(newVect);
-				//planeSpatial.setLocalTranslation(newVect);
-				planeSpatial.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
-				Vector3f w = new Vector3f(0,0,3);
-				planeSpatial.setLocalTranslation(planeSpatial
-						.getLocalTranslation().add(w));
-				planeSpatial.rotate(0,(float)Math.PI/2,0);
-				//planeSpatial.setLocalTranslation(0,0,+1);
-				planeSpatial.setLocalScale(0.03f);
-				SpheresNode.attachChild(planeSpatial);					
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
+	
 		
 		
 		
@@ -201,5 +202,18 @@ public class EarthTest extends SimpleApplication {
 		sphereGeo.setLocalTranslation(v);
 		SpheresNode.setMaterial(mat);
 		SpheresNode.attachChild(sphereGeo);	
+	}
+	public static boolean updatePositions()
+	{
+		try {
+			return RealTimeFlight.affichagePositionsAvions();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	public static Integer randBetween(int start, int end) 
+    {
+    	return start + (int)Math.round(Math.random() * (end - start));
 	}
 }
