@@ -171,7 +171,7 @@ public class MainSystem
 		Object[] elements = new Object[]{"Element 1", "Element 2", "Element 3", "Element 4", "Element 5"};
 		JComboBox j = new JComboBox(elements);
 		JButton vue = new JButton("Vue avion");
-		
+		//
 		
 		jp.add(jlab);
 		jp.add(j);
