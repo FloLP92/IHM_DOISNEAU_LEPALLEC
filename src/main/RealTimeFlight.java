@@ -214,4 +214,8 @@ public class RealTimeFlight
 	{
 		boolDate = false;
 	}
+	public float getDirection()
+	{
+		return direction;
+	}
 }
