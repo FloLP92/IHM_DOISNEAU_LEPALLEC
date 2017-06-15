@@ -26,10 +26,9 @@ public class RealTimeFlight
 	private String codeICAO;
 	private boolean positionSol;
 	private static BufferedReader bufRead;
-	private boolean update = false;
-	private static Date lastDate; //garde point de la liste ou commencer
-	private static boolean boolDate = false; //verifie si bon point de la liste
+	private static Date lastDate = null; //garde point de la liste ou commencer
 	private Spatial plane; //figure correspondante
+	private static int compteur = 0;
 	
 	public RealTimeFlight(Date chCurrent, String chId,float chAltitude, float chLat,
 			float chLong, float chVitesse, float chDir, Date chLastPosition,Date chLastVitesse,
@@ -54,19 +53,26 @@ public class RealTimeFlight
 			FileReader file = new FileReader("ressources/realtime_flights.dat");
 			bufRead = new BufferedReader(file);
 			String line = bufRead.readLine();
-			int compteur =1;
 			while(line != null){ //Tant qu'on a des lignes a lire dans le fichier
 				String[] array = line.split(",");
 				String[] parts = array[0].split("///");
 				//System.out.println("Avion "+compteur+" :\n");
-				
 				//time part
 				Timestamp t1 = new Timestamp(Long.parseLong(parts[0])*1);
 				Date time = new Date(t1.getTime());
-				if( (time != lastDate)&&(!boolDate) )//on continue a lire
+				if(lastDate == null)
 				{
-					boolDate = true;
+					lastDate = time;
+				}
+				if(time.before(lastDate))//on continue a lire
+				{
+					line = bufRead.readLine();
 					continue;
+				}
+				else if(time.after(lastDate))
+				{
+					lastDate = time;
+					break;
 				}
 				if(parts[2].equals("null")){
 					parts[2] = "0";
@@ -121,33 +127,20 @@ public class RealTimeFlight
 					bool = true;
 				}
 				line = bufRead.readLine();
-				compteur++;
 				
 				//entrée existante, est-elle a jour?
 				if(MainSystem.getRealTimeFlight().containsKey(parts[1]))
 				{
-					//est il déja actualisé?
-					if(!MainSystem.getRealTimeFlight().get(parts[1]).getUpdate())
+					RealTimeFlight chR;
+					if(!parts[9].equals("null"))
 					{
-						RealTimeFlight chR;
-						if(!parts[9].equals("null"))
-						{
-							chR = new RealTimeFlight(time,parts[1],Float.parseFloat(parts[2]),Float.parseFloat(parts[3]),Float.parseFloat(parts[4]),Float.parseFloat(parts[5]),Float.parseFloat(parts[6]),date,date2,Float.parseFloat(parts[9]),parts[10],bool);
-							MainSystem.updateRealTimeFlight(parts[1], chR);				
-						}
-						else{
-							Float f = new Float(0.0);
-							chR = new RealTimeFlight(time,parts[1],Float.parseFloat(parts[2]),Float.parseFloat(parts[3]),Float.parseFloat(parts[4]),Float.parseFloat(parts[5]),Float.parseFloat(parts[6]),date,date2,f,parts[10],bool);
-							MainSystem.updateRealTimeFlight(parts[1], chR);
-						}
-						chR.setUpdate();
+						chR = new RealTimeFlight(time,parts[1],Float.parseFloat(parts[2]),Float.parseFloat(parts[3]),Float.parseFloat(parts[4]),Float.parseFloat(parts[5]),Float.parseFloat(parts[6]),date,date2,Float.parseFloat(parts[9]),parts[10],bool);
+						MainSystem.updateRealTimeFlight(parts[1], chR);				
 					}
-					else //deja actualisé
-					{
-						lastDate = time;
-						MainSystem.getRealTimeFlight().get(parts[1])
-						.setUpdate();
-						break;
+					else{
+						Float f = new Float(0.0);
+						chR = new RealTimeFlight(time,parts[1],Float.parseFloat(parts[2]),Float.parseFloat(parts[3]),Float.parseFloat(parts[4]),Float.parseFloat(parts[5]),Float.parseFloat(parts[6]),date,date2,f,parts[10],bool);
+						MainSystem.updateRealTimeFlight(parts[1], chR);
 					}
 				}
 				//nouvelle entrée, on ajoute directe
@@ -194,14 +187,6 @@ public class RealTimeFlight
 	{
 		return altitude;
 	}
-	public boolean getUpdate()
-	{
-		return update;
-	}
-	public void setUpdate()
-	{
-		update = true;
-	}
 	public Spatial getSpatial()
 	{
 		return plane;
@@ -210,12 +195,12 @@ public class RealTimeFlight
 	{
 		plane = chSpatial;
 	}
-	public static void enableRead()
-	{
-		boolDate = false;
-	}
 	public float getDirection()
 	{
 		return direction;
+	}
+	public String getIdVol()
+	{
+		return idVol;
 	}
 }
