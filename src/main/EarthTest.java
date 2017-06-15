@@ -10,6 +10,7 @@ import javax.swing.JMenuBar;
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.input.ChaseCamera;
+import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -53,9 +54,9 @@ public class EarthTest extends SimpleApplication {
 		//earth_node.setLocalScale(5.0f);
 		rootNode.attachChild(earth_node);
 		
-		DirectionalLight directionalLight = new DirectionalLight(new Vector3f(-2,-10,4));
-		directionalLight.setColor(ColorRGBA.White.mult(1.7f));
-		rootNode.addLight(directionalLight);
+		AmbientLight ambientlLight = new AmbientLight();
+		ambientlLight.setColor(ColorRGBA.White.mult(1.7f));
+		rootNode.addLight(ambientlLight);
 		viewPort.setBackgroundColor(new ColorRGBA(0.1f,0.1f,0.1f,1.0f));
 		flyCam.setEnabled(false);
 		ChaseCamera chaseCam = new ChaseCamera(cam,earth_geom,inputManager);
@@ -91,8 +92,10 @@ public class EarthTest extends SimpleApplication {
 		objet orienté pariel que le monde
 		lookAt pour s aligner regarder l aterre
 		si on fais avancer reculer que altitude qui va changer*/
-		while( !updatePositions() )
+		//while( !updatePositions() )
+		for(int i=0;i<2;i++)
 		{
+			updatePositions();
 			int pos = 0;
 			RealTimeFlight.enableRead();
 			for( RealTimeFlight r : MainSystem.getRealTimeFlight().values() )
@@ -111,7 +114,9 @@ public class EarthTest extends SimpleApplication {
 					s.setMaterial(mat);
 					s.move(oldVect);
 					s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
-					Vector3f w = new Vector3f(0,0,3);
+					//Vector3f w = new Vector3f(0,0,3);
+					Vector3f up = s.getLocalRotation().mult(new Vector3f(0,-1.0f,0));
+					s.move(up);
 					//s.setLocalTranslation(s.getLocalTranslation().add(w));
 					s.rotate(0,(float)Math.PI/2,0);
 					//planeSpatial.setLocalTranslation(0,0,+1);
@@ -127,16 +132,30 @@ public class EarthTest extends SimpleApplication {
 				}
 				SpheresNode.attachChild(s);	
 				pos++;
-			}
-			/*
+			}	
 			try {
-				Thread.sleep(4000);
+				TimeUnit.SECONDS.sleep(3);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			*/
 		}
+		
+		//Afficher texte zine 3D
+		/*
+		 * guiFont = assetManager.loadFRont("Interface/Fonts/Default.fnt");
+		 * BitmapText hudText = new BitmapText(guiFont, false);
+		 * hudText.setColor(ColorRGBA.Blue);
+		 * hudText.setText(You can write any string here");
+		 * hudText.setLocalTranslation(300, hudText.getLineHeight(),0);
+		 * myNode.attachChild(hudText);
+		 * 
+		 *Altitude
+		 *Vector3f up = plane.getLocalRotation().mult(new Vector3f(0,-1,0f,0));
+		 *plane(move(up);
+		 */
+		
+		
 		
 		//Frame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this);
 		//frame.setJMenuBar(menubar);
