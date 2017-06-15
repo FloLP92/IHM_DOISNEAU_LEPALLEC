@@ -22,6 +22,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.system.Timer;
 
 public class EarthTest extends SimpleApplication {
 
@@ -120,8 +121,8 @@ public class EarthTest extends SimpleApplication {
 				s.rotate(0,0,r.getDirection());
 				//rotation axe des z puis move up axe des y 
 				//Vector3f w = new Vector3f(0,0,3);
-				Vector3f up = s.getLocalRotation().mult(new Vector3f(0,0,-1.0f));
-				s.move(up);
+				//Vector3f up = s.getLocalRotation().mult(new Vector3f(0,0,-1.0f));
+				//s.move(up);
 				//s.rotate(0,0,r.getDirection());
 			}
 			else
@@ -193,8 +194,20 @@ public class EarthTest extends SimpleApplication {
 			rootNode.attachChild(LinesNode);
 			oldVect = newVect;
 		}*/
-
-	}
+	}/*
+	@Override
+	public void simpleUpdate(float tpf)
+	{
+		Timer t = getTimer();
+		System.out.println(String.format("%02d:%02d:%02d", 
+				TimeUnit.MILLISECONDS.toHours(t),
+				TimeUnit.MILLISECONDS.toMinutes(millis) -  
+				TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), // The change is in this line
+				TimeUnit.MILLISECONDS.toSeconds(millis) - 
+				TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));  );
+		updateEarth();
+	}*/
+	
 	private static Vector3f geoCoordTo3dCoord(float lat, float lon)
 	{
 		float lat_cor = lat + TEXTURE_LAT_OFFSET;
@@ -252,12 +265,11 @@ public class EarthTest extends SimpleApplication {
 				s.setMaterial(mat);
 				s.move(oldVect);
 				s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
-				s.rotate((float)Math.PI/2,0,0);
-				s.rotate(0,0,r.getDirection());
+				s.rotate((float)Math.PI/2,0,r.getDirection());
 				//rotation axe des z puis move up axe des y 
 				//Vector3f w = new Vector3f(0,0,3);
-				Vector3f up = s.getLocalRotation().mult(new Vector3f(0,0,-1.0f));
-				s.move(up);
+				//Vector3f up = s.getLocalRotation().mult(new Vector3f(0,0,-1.0f));
+				//s.move(up);
 				//s.rotate(0,0,r.getDirection());
 			}
 			else
