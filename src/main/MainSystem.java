@@ -6,6 +6,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -26,6 +27,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -156,21 +158,28 @@ public class MainSystem
 		
 		//Partie 2D de gauche
 	   
-		Container c = new Container();
-		GroupLayout groupe = new GroupLayout(c);
-		//c.setLayout(groupe);
-
-		groupe.setHorizontalGroup(
-				groupe.createSequentialGroup()
-					.addComponent(new JButton("hello1"))
-					.addComponent(new JButton("hello2"))
-					.addGroup(groupe.createParallelGroup(GroupLayout.Alignment.LEADING)
-					.addComponent(new JButton("hello3"))
-					.addComponent(new JButton("hello4")))
-	    );
-		groupe.setAutoCreateGaps(true);
-		groupe.setAutoCreateContainerGaps(true);
 		
+		Container c = new Container();
+		//Global Part
+		c.setLayout(new BoxLayout(c, 1));
+		
+		
+		//Partie Selection Avion
+		JPanel jp = new JPanel(new GridLayout(3,1));
+		JLabel jlab = new JLabel("Selectionnez un avion :");
+		
+		Object[] elements = new Object[]{"Element 1", "Element 2", "Element 3", "Element 4", "Element 5"};
+		JComboBox j = new JComboBox(elements);
+		JButton vue = new JButton("Vue avion");
+		
+		
+		jp.add(jlab);
+		jp.add(j);
+		jp.add(vue);
+		jp.setPreferredSize(new Dimension(500,500));
+		jp.setMaximumSize(new Dimension(400,200));
+		//jp.setBounds(50, 50, 100,100);
+		c.add(jp);
 		
 		panel.add(c, BorderLayout.WEST);
 		
