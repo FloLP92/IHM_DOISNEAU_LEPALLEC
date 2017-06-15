@@ -2,7 +2,10 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -17,7 +20,9 @@ import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -148,26 +153,24 @@ public class MainSystem
 		
 		
 		//Partie 2D de gauche
-	    JTable table = new JTable();
-	    TableColumn t =new TableColumn();
-	    table.addColumn(new TableColumn());
-	    table.add(new JButton("hello world"));
-        Object[][] donnees = {
-                {"Johnathan", "Sykes","red", true, "TENNIS"},
-                {"Nicolas", "Van de Kampf", "black", true, "FOOTBALL"},
-                {"Damien", "Cuthbert", "cyan", true, "RIEN"},
-                {"Corinne", "Valance", "blue", false, "NATATION"},
-                {"Emilie", "Schrödinger", "magenta", false, "FOOTBALL"},
-                {"Delphine", "Duke", "yellow", false, "TENNIS"},
-                {"Eric", "Trump", "pink", true, "FOOTBALL"},
-        };
-        
- 
-        String[] entetes = {"Prénom", "Nom", "Couleur favorite", "Homme", "Sport"};
- 
-        JTable tableau = new JTable(donnees, entetes);
-	    JScrollPane scrollPane = new JScrollPane(tableau);
-		panel.add(scrollPane, BorderLayout.WEST);
+	   
+		Container c = new Container();
+		GroupLayout groupe = new GroupLayout(c);
+		//c.setLayout(groupe);
+
+		groupe.setHorizontalGroup(
+				groupe.createSequentialGroup()
+					.addComponent(new JButton("hello1"))
+					.addComponent(new JButton("hello2"))
+					.addGroup(groupe.createParallelGroup(GroupLayout.Alignment.LEADING)
+					.addComponent(new JButton("hello3"))
+					.addComponent(new JButton("hello4")))
+	    );
+		groupe.setAutoCreateGaps(true);
+		groupe.setAutoCreateContainerGaps(true);
+		
+		
+		panel.add(c, BorderLayout.WEST);
 		
 		// Add the canvas to the panel
 		panel.add(canvas, BorderLayout.CENTER);
