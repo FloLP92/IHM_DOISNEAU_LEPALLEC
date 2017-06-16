@@ -29,9 +29,11 @@ public class RealTimeFlight
 	private static Date lastDate = null; //garde point de la liste ou commencer
 	private Spatial plane = null; //figure correspondante
 	private static int compteur = 0;
+	private Path path;
+	private boolean selected = false;
 	
-	public RealTimeFlight(Date chCurrent, String chId,float chAltitude, float chLat,
-			float chLong, float chVitesse, float chDir, Date chLastPosition,Date chLastVitesse,
+	public RealTimeFlight(Date chCurrent, String chId,float chLat,
+			float chLong, float chAltitude, float chVitesse, float chDir, Date chLastPosition,Date chLastVitesse,
 			float chVitesseVert, String chCode, boolean chPos)
 	{
 		currentTime = chCurrent;
@@ -46,6 +48,7 @@ public class RealTimeFlight
 		vitesseVert = chVitesseVert;
 		codeICAO = chCode;
 		positionSol = chPos;
+		path = new Path();
 	}
 	
 	public static boolean affichagePositionsAvions() throws IOException{
@@ -136,9 +139,14 @@ public class RealTimeFlight
 					RealTimeFlight chR;
 					if(!parts[9].equals("null"))
 					{
-						chR = new RealTimeFlight(time,parts[1],Float.parseFloat(parts[2]),Float.parseFloat(parts[3]),Float.parseFloat(parts[4]),Float.parseFloat(parts[5]),Float.parseFloat(parts[6]),date,date2,Float.parseFloat(parts[9]),parts[10],bool);
+						chR = new RealTimeFlight(time,parts[1],Float.parseFloat(parts[2]),
+								Float.parseFloat(parts[3]),Float.parseFloat(parts[4]),
+								Float.parseFloat(parts[5]),Float.parseFloat(parts[6]),
+								date,date2,Float.parseFloat(parts[9]),parts[10],bool);
 						Spatial s = MainSystem.getRealTimeFlight().get(parts[1]).getSpatial();
 						chR.addSpatial(s);
+						Path chPath = MainSystem.getRealTimeFlight().get(parts[1]).getPath();
+						chR.setPath(chPath);
 						MainSystem.updateRealTimeFlight(parts[1], chR);				
 					}
 					else{
@@ -146,6 +154,8 @@ public class RealTimeFlight
 						chR = new RealTimeFlight(time,parts[1],Float.parseFloat(parts[2]),Float.parseFloat(parts[3]),Float.parseFloat(parts[4]),Float.parseFloat(parts[5]),Float.parseFloat(parts[6]),date,date2,f,parts[10],bool);
 						Spatial s = MainSystem.getRealTimeFlight().get(parts[1]).getSpatial();
 						chR.addSpatial(s);
+						Path chPath = MainSystem.getRealTimeFlight().get(parts[1]).getPath();
+						chR.setPath(chPath);
 						MainSystem.updateRealTimeFlight(parts[1], chR);
 					}
 				}
@@ -220,5 +230,21 @@ public class RealTimeFlight
 	public boolean getPositionSol()
 	{
 		return positionSol;
+	}
+	public void setPath(Path chPath)
+	{
+		path = chPath;
+	}
+	public Path getPath()
+	{
+		return path;
+	}
+	public boolean getSelected()
+	{
+		return selected;
+	}
+	public void setSelected(boolean b)
+	{
+		selected = b;
 	}
 }

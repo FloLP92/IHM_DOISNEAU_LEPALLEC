@@ -23,10 +23,12 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Plane;
 import com.jme3.math.Ray;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.system.Timer;
 
@@ -42,12 +44,13 @@ public class EarthTest extends SimpleApplication
 	private float chLat,chLong;
 	private Vector3f oldVect, newVect;
 	private static Plane plane;
-	private static final ColorRGBA tabColor[] = {ColorRGBA.Red,ColorRGBA.Blue,ColorRGBA.Pink,
+	private static final ColorRGBA tabColor[] = {ColorRGBA.Blue,ColorRGBA.Pink,
 			ColorRGBA.Yellow,ColorRGBA.Gray,ColorRGBA.Cyan,ColorRGBA.Black,ColorRGBA.Magenta,
 			ColorRGBA.Orange,ColorRGBA.White,ColorRGBA.Green,ColorRGBA.BlackNoAlpha};
 	private Timer oldTimer;
 	private java.util.Timer timer;
 	private static int compteurTemps = 0;
+	//private HashMap<>
 	
 	@Override
 	public void simpleInitApp() 
@@ -124,7 +127,7 @@ public class EarthTest extends SimpleApplication
 			oldVect = geoCoordTo3dCoord(chLat,chLong);
 			Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
 			mat.getAdditionalRenderState().setLineWidth(4.0f);
-			mat.setColor("Color", tabColor[randBetween(0, 11)]);
+			mat.setColor("Color", tabColor[randBetween(0, 10)]);
 			s.setLocalScale(0.03f);
 			s.setMaterial(mat);
 			s.move(oldVect);
@@ -132,6 +135,7 @@ public class EarthTest extends SimpleApplication
 			s.rotate((float)Math.PI/2,0,0);
 			s.rotate(0,0,r.getDirection());
 			r.addSpatial(s);
+			r.getPath().addPos(r);
 			//rotation axe des z puis move up axe des y 
 			//Vector3f w = new Vector3f(0,0,3);
 			//Vector3f up = s.getLocalRotation().mult(new Vector3f(0,0,-1.0f));
@@ -189,13 +193,13 @@ public class EarthTest extends SimpleApplication
 		rootNode.attachChild(PlanesNode);
 		
 		
-		
 		/*
 		Node LinesNode = new Node("LinesNode");
 		Vector3f oldVect = new Vector3f(1,0,0);
 		for(int i=0;i<100;i++)
 		{// ...
 			float t=i/5.0f;
+			
 			Vector3f newVect = new Vector3f(FastMath.cos(t),t/5.0f,FastMath.sin(t));
 			Line line = new Line(oldVect, newVect);
 			Geometry lineGeo = new Geometry("lineGeo", line);
@@ -235,18 +239,24 @@ public class EarthTest extends SimpleApplication
 			if( name.equals("Select") && !keyPressed )
 			{
 				CollisionResults results = new CollisionResults();
-				//Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-				MouseInfo.getPointerInfo().getLocation();
-				Ray ray = new Ray(new Vector3f(0,0,0),cam.getDirection());
+				//MouseInfo.getPointerInfo().getLocation();
+				Vector2f click2d = inputManager.getCursorPosition();
+				Vector3f click3d = cam.getWorldCoordinates(
+						click2d,0f).clone();
+				Vector3f dir = cam.getWorldCoordinates(
+						click2d,1f).subtractLocal(click3d).normalizeLocal();	
+				Ray ray = new Ray(click3d,dir);
 				PlanesNode.collideWith(ray, results);
-				
-				System.out.println("----- Collisions? " + results.size() + "-----");
 				if (results.size() > 0) 
 				{
 					// The closest collision point is what was truly clicked:
 					CollisionResult selection = results.getClosestCollision();
 					Spatial planeSelected = selection.getGeometry();
-					planeSelected.setLocalScale(0.3f);
+					Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
+					mat.getAdditionalRenderState().setLineWidth(4.0f);
+					mat.setColor("Color", ColorRGBA.Red);
+					planeSelected.setMaterial(mat);
+					
 				} 
 			}
 			
@@ -303,11 +313,39 @@ public class EarthTest extends SimpleApplication
 	public static Integer randBetween(int start, int end) 
     {
     	return start + (int)Math.round(Math.random() * (end - start));
-	}
+	}/*
+	public void drawTrajectory(Path path)
+	{
+		Vector3f vec1 = new Vector3f(0,0,0);
+		Vector3f vec2;
+		for(RealTimeFlight r : path.getListPos())
+		{
+			
+			for(int i=0;i<100;i++)
+			{
+				float t=i/5.0f;
+				if(path.getListPos().indexOf(r)==0)
+				{
+					vec1 =
+				}
+				Vector3f newVect = new Vector3f(FastMath.cos(t),t/5.0f,FastMath.sin(t));
+				Line line = new Line(vec1, newVect);
+				Geometry lineGeo = new Geometry("lineGeo", line);
+				Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
+				mat.getAdditionalRenderState().setLineWidth(4.0f);
+				mat.setColor("Color", ColorRGBA.Red);
+				lineGeo.setMaterial(mat);
+				lineGeo.setLocalTranslation(0.0f,0.0f,8.0f);
+				LinesNode.setMaterial(mat);
+				LinesNode.attachChild(lineGeo);
+				rootNode.attachChild(LinesNode);
+				vec1 = newVect;
+			}
+		}
+	}*/
 	public void updateEarth()
 	{
 		updatePositions();
-		int pos = 0;
 		Spatial s;
 		for( RealTimeFlight r : MainSystem.getRealTimeFlight().values() )
 		{	
@@ -323,7 +361,7 @@ public class EarthTest extends SimpleApplication
 				oldVect = geoCoordTo3dCoord(chLat,chLong);
 				Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
 				mat.getAdditionalRenderState().setLineWidth(4.0f);
-				mat.setColor("Color", tabColor[randBetween(0, 11)]);
+				mat.setColor("Color", tabColor[randBetween(0, 10)]);
 				s.setLocalScale(0.03f);
 				s.setMaterial(mat);
 				s.move(oldVect);
@@ -337,7 +375,7 @@ public class EarthTest extends SimpleApplication
 				//s.move(up);
 				//s.rotate(0,0,r.getDirection());
 				PlanesNode.attachChild(s);	
-				pos++;
+				r.getPath().addPos(r);
 			}
 			else
 			{
@@ -350,10 +388,6 @@ public class EarthTest extends SimpleApplication
 					float chLatDest = a.getLatitude();
 					float chLongDest = a. getLongitude();
 					s = r.getSpatial();
-					System.out.println("chLat "+chLat);
-					System.out.println("chLong "+chLong);
-					System.out.println("DestLat "+chLatDest);
-					System.out.println("destLong "+chLongDest);
 
 					if(chLat == chLatDest && chLong == chLongDest)
 					{
@@ -370,6 +404,7 @@ public class EarthTest extends SimpleApplication
 						s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
 						s.rotate((float)Math.PI/2,0,0);
 						s.rotate(0,0,r.getDirection());
+						r.getPath().addPos(r);
 						//Vector3f up = s.getLocalRotation().mult(new Vector3f(0,0,-1.0f));
 						//s.move(up);
 					}	
