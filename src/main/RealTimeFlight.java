@@ -27,7 +27,7 @@ public class RealTimeFlight
 	private boolean positionSol;
 	private static BufferedReader bufRead;
 	private static Date lastDate = null; //garde point de la liste ou commencer
-	private Spatial plane; //figure correspondante
+	private Spatial plane = null; //figure correspondante
 	private static int compteur = 0;
 	
 	public RealTimeFlight(Date chCurrent, String chId,float chAltitude, float chLat,
@@ -64,6 +64,8 @@ public class RealTimeFlight
 				{
 					lastDate = time;
 				}
+				parts[1] = parts[1].replaceAll("\\s+","");
+
 				if(time.before(lastDate))//on continue a lire
 				{
 					line = bufRead.readLine();
@@ -135,11 +137,15 @@ public class RealTimeFlight
 					if(!parts[9].equals("null"))
 					{
 						chR = new RealTimeFlight(time,parts[1],Float.parseFloat(parts[2]),Float.parseFloat(parts[3]),Float.parseFloat(parts[4]),Float.parseFloat(parts[5]),Float.parseFloat(parts[6]),date,date2,Float.parseFloat(parts[9]),parts[10],bool);
+						Spatial s = MainSystem.getRealTimeFlight().get(parts[1]).getSpatial();
+						chR.addSpatial(s);
 						MainSystem.updateRealTimeFlight(parts[1], chR);				
 					}
 					else{
 						Float f = new Float(0.0);
 						chR = new RealTimeFlight(time,parts[1],Float.parseFloat(parts[2]),Float.parseFloat(parts[3]),Float.parseFloat(parts[4]),Float.parseFloat(parts[5]),Float.parseFloat(parts[6]),date,date2,f,parts[10],bool);
+						Spatial s = MainSystem.getRealTimeFlight().get(parts[1]).getSpatial();
+						chR.addSpatial(s);
 						MainSystem.updateRealTimeFlight(parts[1], chR);
 					}
 				}
@@ -202,5 +208,17 @@ public class RealTimeFlight
 	public String getIdVol()
 	{
 		return idVol;
+	}
+	public void addSpatial(Spatial s)
+	{
+		plane = s;
+	}
+	public void removeSpatial()
+	{
+		plane = null;
+	}
+	public boolean getPositionSol()
+	{
+		return positionSol;
 	}
 }
