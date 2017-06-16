@@ -2,11 +2,13 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -20,10 +22,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -33,7 +37,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.TableColumn;
@@ -163,24 +169,95 @@ public class MainSystem
 		//Global Part
 		c.setLayout(new BoxLayout(c, 1));
 		
+		//Partie Lecture du fichier
+		JPanel panelLecture = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		panelLecture.setPreferredSize(new Dimension(400,200));
+		
+		JLabel statut = new JLabel("Statut :");
+		JButton lectureAction = new JButton();
+		/*try {
+		    Image img = ImageIO.read(getClass().getResource("ressources/play_icon.png"));
+		    lectureAction.setIcon(new ImageIcon(img));
+		} catch (Exception ex) {
+		System.out.println(ex);
+		}*/
+		final int vitesseMin = 1;
+		final int vitesseMax = 10;
+		JSlider vitesseLecture = new JSlider(JSlider.HORIZONTAL,vitesseMin,vitesseMax,vitesseMin);
+		vitesseLecture.setMajorTickSpacing(1);
+		vitesseLecture.setPaintTicks(true);
+		vitesseLecture.setPaintLabels(true);
+		
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.gridwidth = 1;
+		gbc.gridheight = 1;
+		panelLecture.add(statut,gbc);
+		gbc.gridy=1;
+		panelLecture.add(lectureAction,gbc);
+		gbc.gridy=2;
+		gbc.fill=1;
+		panelLecture.add(vitesseLecture,gbc);
 		
 		//Partie Selection Avion
-		JPanel jp = new JPanel(new GridLayout(3,1));
+		JPanel panelAvion = new JPanel(new GridBagLayout());
+		GridBagConstraints gbc1 = new GridBagConstraints();
+		panelAvion.setPreferredSize(new Dimension(400,200));
+
 		JLabel jlab = new JLabel("Selectionnez un avion :");
-		
 		Object[] elements = new Object[]{"Element 1", "Element 2", "Element 3", "Element 4", "Element 5"};
 		JComboBox j = new JComboBox(elements);
 		JButton vue = new JButton("Vue avion");
-		//
 		
-		jp.add(jlab);
-		jp.add(j);
-		jp.add(vue);
-		jp.setPreferredSize(new Dimension(500,500));
-		jp.setMaximumSize(new Dimension(400,200));
-		//jp.setBounds(50, 50, 100,100);
-		c.add(jp);
+		gbc1.gridx=0;
+		gbc1.gridy=0;
+		gbc1.gridwidth = 1;
+		gbc1.gridheight = 1;
 		
+		panelAvion.add(jlab,gbc1);
+		gbc1.gridy=1;
+		gbc1.gridwidth = 3;
+		gbc1.fill = 1;
+		panelAvion.add(j,gbc1);
+		gbc1.fill = 0;
+		gbc1.gridy=2;
+		gbc1.gridx=0;
+		gbc1.gridwidth=1;
+		panelAvion.add(vue,gbc1);
+		
+		//Partie Filtrer vols
+		JPanel panelVols = new JPanel(new GridBagLayout());
+		panelVols.setPreferredSize(new Dimension(400,300));
+		GridBagConstraints gbc2 = new GridBagConstraints();
+		
+		JLabel typeVol = new JLabel("Type vol :");
+		JRadioButton entrants = new JRadioButton("entrants");
+		JRadioButton sortants = new JRadioButton("sortants");
+		Object[] elements2 = new Object[]{"Element 1", "Element 2", "Element 3", "Element 4", "Element 5"};
+		Object[] elements3 = new Object[]{"Element 1", "Element 2", "Element 3", "Element 4", "Element 5"};
+		JComboBox paysSelected = new JComboBox(elements);
+		JComboBox aeroportSelected = new JComboBox(elements);
+		gbc2.gridx = 0;
+		gbc2.gridy = 0;
+		gbc2.gridheight = 1;
+	    gbc2.gridwidth = 1;
+	    panelVols.add(typeVol,gbc2);
+		
+	    gbc2.gridy = 1;
+	    panelVols.add(entrants,gbc2);
+	    gbc2.gridx =1;
+	    panelVols.add(sortants,gbc2);
+	    gbc2.gridx=0;
+	    gbc2.gridy=2;
+	    gbc2.gridwidth = 2;
+	    panelVols.add(paysSelected,gbc2);
+	    gbc2.gridy = 3;
+	    panelVols.add(aeroportSelected,gbc2);
+	    
+	    c.add(panelLecture);
+		c.add(panelAvion);
+		c.add(panelVols);
 		panel.add(c, BorderLayout.WEST);
 		
 		// Add the canvas to the panel
