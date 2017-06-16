@@ -182,6 +182,7 @@ public class MainSystem
 		} catch (Exception ex) {
 		System.out.println(ex);
 		}*/
+		//
 		final int vitesseMin = 1;
 		final int vitesseMax = 10;
 		JSlider vitesseLecture = new JSlider(JSlider.HORIZONTAL,vitesseMin,vitesseMax,vitesseMin);
