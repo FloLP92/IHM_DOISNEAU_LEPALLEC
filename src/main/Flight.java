@@ -21,11 +21,6 @@ public class Flight
 		codeCompagnie = chCode;
 		modele = chModele;
 	}
-	public String toString()
-	{
-		return "Flight "+idVol+" "+airportDepart+" -> "+airportDestination
-				+" "+codeCompagnie+" "+modele;
-	}
 	public String getId()
 	{
 		return idVol;
@@ -53,5 +48,10 @@ public class Flight
 	public Pays getPaysDest()
 	{
 		return airportDestination.getPays();
+	}
+	public String toString()
+	{
+		return "Flight "+idVol+" "+airportDepart+" -> "+airportDestination
+				+" "+codeCompagnie+" "+modele;
 	}
 }
