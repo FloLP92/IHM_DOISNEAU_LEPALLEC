@@ -274,7 +274,7 @@ public class MainSystem
 		c.add(panelVols);
 		c.setBackground(Color.WHITE);
 		panel.add(c, BorderLayout.WEST);
-		
+		//
 		// Add the canvas to the panel
 		panel.add(canvas, BorderLayout.CENTER);
 		
