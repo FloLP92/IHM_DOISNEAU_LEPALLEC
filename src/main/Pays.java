@@ -57,4 +57,7 @@ public class Pays
 		this.nomPays = nomPays;
 	}
 	
+	public String toString(){
+		return nomPays;
+	}
 }
