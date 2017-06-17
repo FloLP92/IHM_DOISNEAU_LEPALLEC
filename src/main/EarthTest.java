@@ -52,6 +52,8 @@ public class EarthTest extends SimpleApplication
 	private Timer oldTimer;
 	private java.util.Timer timer;
 	private static int compteurTemps = 0;
+	boolean lecture = false;
+	private int vitesseLecture = 1;
 	//private HashMap<>
 	
 	@Override
@@ -113,12 +115,6 @@ public class EarthTest extends SimpleApplication
 		
 		listRf = MainSystem.getRealTimeFlight();
 		
-		/*
-		objet orienté pariel que le monde
-		lookAt pour s aligner regarder l aterre
-		si on fais avancer reculer que altitude qui va changer*/
-		//while( !updatePositions() )
-		
 		updatePositions();
 		for( RealTimeFlight r : MainSystem.getRealTimeFlight().values() )
 		{	
@@ -135,18 +131,6 @@ public class EarthTest extends SimpleApplication
 			s.setMaterial(mat);
 			directionPlane(s,r,true);
 		}	
-		
-		/*
-		oldTimer = getTimer();
-		timer = new java.util.Timer();
-		timer.scheduleAtFixedRate(new TimerTask() 
-		{
-			@Override
-			public void run() 
-			{
-				updateEarth();	
-			}
-		}, 2*1000, 2*1000);*/
 		
 		//Afficher texte zine 3D
 		/*
@@ -209,12 +193,15 @@ public class EarthTest extends SimpleApplication
 	@Override
 	public void simpleUpdate(float tpf)
 	{
-		if(compteurTemps < 100000)
+		if(lecture)
 		{
-			updateEarth();
-			compteurTemps = 0;
+			if(compteurTemps < 100)
+			{
+				updateEarth();
+				compteurTemps = 0;
+			}
+			compteurTemps++;
 		}
-		compteurTemps++;
 	}
 	
 	/** Declaring the "Shoot" action and mapping to its triggers. */
@@ -307,6 +294,17 @@ public class EarthTest extends SimpleApplication
     {
     	return start + (int)Math.round(Math.random() * (end - start));
 	}
+	public void setLecture()
+	{
+		if(lecture)
+			lecture = false;
+		else
+			lecture = true;
+	}
+	public void setVitesseLecture(int vit)
+	{
+		vitesseLecture = vit;
+	}
 	
 	public void drawTrajectory(Path path)
 	{
@@ -351,11 +349,23 @@ public class EarthTest extends SimpleApplication
 		s.move(oldVect);
 		s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
 		s.rotate((float)Math.PI/2,0,0);
+		//s.rotate(0,0,(loat)Math.toRadians(r.getDirection()));
+		s.rotate(0,r.getDirection(),0);
+		Vector3f up = s.getLocalRotation().mult(new Vector3f(0,-1.0f,0));
+		s.move(up.mult(0.07f));
+
+		//s.rotate(0,r.getDirection(),0);
+
+		
+		/*
+		s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
+		s.rotate((float)Math.PI/2,0,0);
 		s.rotate(0,0,r.getDirection());
 		r.getPath().addPos(r);
 		Vector3f up = s.getLocalRotation().mult(new Vector3f(0,-1.0f,0));
 		//s.move(up);
 		//s.rotate(0,0,r.getDirection());
+		 */
 	}
 	public void updateEarth()
 	{

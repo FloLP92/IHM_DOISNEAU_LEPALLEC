@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
-
+import java.util.concurrent.Callable;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -48,6 +48,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.TableColumn;
 
 import main.Flight;
@@ -80,6 +82,7 @@ public class MainSystem
 		
 		MainSystem.lireFichier("ressources/airports.dat");
 		MainSystem.lireFichier("ressources/flights.dat");
+		
 		AppSettings settings = new AppSettings(true);
 		settings.setResolution(1200, 800);
 		settings.setSamples(8);
@@ -188,6 +191,20 @@ public class MainSystem
 		final int vitesseMin = 1;
 		final int vitesseMax = 10;
 		JSlider vitesseLecture = new JSlider(JSlider.HORIZONTAL,vitesseMin,vitesseMax,vitesseMin);
+		vitesseLecture.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) 
+			{
+				app.enqueue(new Callable<Object>()
+				{
+					public Object call() throws Exception
+					{
+						app.setVitesseLecture(vitesseLecture.getValue());
+						return null;
+					}
+				});	
+			}
+		});
 		vitesseLecture.setMajorTickSpacing(1);
 		vitesseLecture.setPaintTicks(true);
 		vitesseLecture.setPaintLabels(true);
@@ -219,11 +236,26 @@ public class MainSystem
 				if(lectureStatut.getText().equals("Reprendre la lecture")){//On était en pause
 					lectureAction.setIcon(new ImageIcon("ressources/pause_icon.png"));
 					lectureStatut.setText("Arreter la lecture");
+					app.enqueue(new Callable<Object>()
+					{
+						public Object call() throws Exception
+						{
+							app.setLecture();
+							return null;}
+					});
 					
 				}
-				else{
+				else
+				{
 					lectureAction.setIcon(new ImageIcon("ressources/play_icon.png"));
 					lectureStatut.setText("Reprendre la lecture");
+					app.enqueue(new Callable<Object>()
+					{
+						public Object call() throws Exception
+						{
+							app.setLecture();
+							return null;}
+					});
 				}
 			}
 		});
@@ -306,19 +338,6 @@ public class MainSystem
 			aeroportSelected.addItem(""+entry.getKey());
 		}
 		aeroportSelected = trierCombo(aeroportSelected);
-		
-		paysSelected.addItemListener(new ItemListener() {
-		     @Override
-		     public void itemStateChanged(ItemEvent e) {
-		    	 if(e.getStateChange() == 1){//Nouvel objet
-		    		 //On update la liste des aeroports par rapport a la liste des pays
-		    		 System.out.println(listPays.get(e.getItem()));
-		    		 
-		    	 }
-		     }
-		 });
-		
-		
 		gbc2.gridx = 0;
 		gbc2.gridy = 0;
 		gbc2.ipadx = 80;
