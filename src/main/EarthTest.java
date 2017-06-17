@@ -353,7 +353,7 @@ public class EarthTest extends SimpleApplication
 		s.rotate((float)Math.PI/2,0,0);
 		s.rotate(0,0,r.getDirection());
 		r.getPath().addPos(r);
-		//Vector3f up = s.getLocalRotation().mult(new Vector3f(0,-1.0f,0));
+		Vector3f up = s.getLocalRotation().mult(new Vector3f(0,-1.0f,0));
 		//s.move(up);
 		//s.rotate(0,0,r.getDirection());
 	}
