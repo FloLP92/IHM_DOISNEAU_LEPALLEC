@@ -326,22 +326,21 @@ public class MainSystem
 			paysSelected.addItem(""+entry.getKey());
 		}
 		paysSelected = trierCombo(paysSelected);
-		JComboBox aeroportSelected = new JComboBox();
+		JComboBox<String> aeroportSelected = new JComboBox<String>();
 		aeroportSelected.addItem(" Aucun Aeroport selectionne");
 		for (HashMap.Entry<String,Airport> entry : listAirports.entrySet()){
 			aeroportSelected.addItem(""+entry.getKey());
 		}
 		aeroportSelected = trierCombo(aeroportSelected);
 
-		
 		paysSelected.addItemListener(new ItemListener() {
 		     @Override
 		     public void itemStateChanged(ItemEvent e) {
 		    	 if(e.getStateChange() == 1){//Nouvel objet
 		    		 //On update la liste des aeroports par rapport a la liste des pays
 		    		 System.out.println(listPays.get(e.getItem()));
-		    		 
 		    	 }
+		    	 //aeroportSelected.removeAll();
 		     }
 		 });
 		
