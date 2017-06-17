@@ -268,7 +268,6 @@ public class MainSystem
 		panelAvion.setPreferredSize(new Dimension(400,200));
 
 		JLabel jlab = new JLabel("Selectionnez un avion :");
-		Object[] elements = new Object[]{"Element 1", "Element 2", "Element 3", "Element 4", "Element 5"};
 		JTextArea infosAvion = new JTextArea("Ici apparaitera les informations sur l'avion selectionne ...");
 		infosAvion.setWrapStyleWord(true);
 		JComboBox j = new JComboBox();
@@ -321,8 +320,6 @@ public class MainSystem
 		JRadioButton sortants = new JRadioButton("sortants");
 		radioButtons.add(entrants);
 		radioButtons.add(sortants);
-		Object[] elements2 = new Object[]{"Element 1", "Element 2", "Element 3", "Element 4", "Element 5"};
-		Object[] elements3 = new Object[]{"Element 1", "Element 2", "Element 3", "Element 4", "Element 5"};
 		JComboBox paysSelected = new JComboBox();
 		paysSelected.addItem(" Aucun Pays selectionne");
 		for (HashMap.Entry<String,Pays> entry : listPays.entrySet()){
@@ -336,12 +333,6 @@ public class MainSystem
 		}
 		aeroportSelected = trierCombo(aeroportSelected);
 
-		
-		aeroportSelected.addItem(" Aucun Aeroport selectionne");
-		for (HashMap.Entry<String,Airport> entry : listAirports.entrySet()){
-			aeroportSelected.addItem(""+entry.getKey());
-		}
-		aeroportSelected = trierCombo(aeroportSelected);
 		
 		paysSelected.addItemListener(new ItemListener() {
 		     @Override
