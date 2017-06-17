@@ -53,6 +53,7 @@ public class EarthTest extends SimpleApplication
 	private java.util.Timer timer;
 	private static int compteurTemps = 0;
 	boolean lecture = false;
+	private int vitesseLecture = 1;
 	//private HashMap<>
 	
 	@Override
@@ -194,7 +195,7 @@ public class EarthTest extends SimpleApplication
 	{
 		if(lecture)
 		{
-			if(compteurTemps < 100000)
+			if(compteurTemps < 100)
 			{
 				updateEarth();
 				compteurTemps = 0;
@@ -299,6 +300,10 @@ public class EarthTest extends SimpleApplication
 			lecture = false;
 		else
 			lecture = true;
+	}
+	public void setVitesseLecture(int vit)
+	{
+		vitesseLecture = vit;
 	}
 	
 	public void drawTrajectory(Path path)

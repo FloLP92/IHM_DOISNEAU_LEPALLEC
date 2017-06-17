@@ -48,6 +48,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.TableColumn;
 
 import main.Flight;
@@ -189,6 +191,20 @@ public class MainSystem
 		final int vitesseMin = 1;
 		final int vitesseMax = 10;
 		JSlider vitesseLecture = new JSlider(JSlider.HORIZONTAL,vitesseMin,vitesseMax,vitesseMin);
+		vitesseLecture.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) 
+			{
+				app.enqueue(new Callable<Object>()
+				{
+					public Object call() throws Exception
+					{
+						app.setVitesseLecture(vitesseLecture.getValue());
+						return null;
+					}
+				});	
+			}
+		});
 		vitesseLecture.setMajorTickSpacing(1);
 		vitesseLecture.setPaintTicks(true);
 		vitesseLecture.setPaintLabels(true);
