@@ -22,6 +22,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
@@ -217,11 +218,26 @@ public class MainSystem
 				if(lectureStatut.getText().equals("Reprendre la lecture")){//On était en pause
 					lectureAction.setIcon(new ImageIcon("ressources/pause_icon.png"));
 					lectureStatut.setText("Arreter la lecture");
+					app.enqueue(new Callable<Object>()
+					{
+						public Object call() throws Exception
+						{
+							app.setLecture();
+							return null;}
+					});
 					
 				}
-				else{
+				else
+				{
 					lectureAction.setIcon(new ImageIcon("ressources/play_icon.png"));
 					lectureStatut.setText("Reprendre la lecture");
+					app.enqueue(new Callable<Object>()
+					{
+						public Object call() throws Exception
+						{
+							app.setLecture();
+							return null;}
+					});
 				}
 			}
 		});

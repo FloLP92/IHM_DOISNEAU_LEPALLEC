@@ -52,6 +52,7 @@ public class EarthTest extends SimpleApplication
 	private Timer oldTimer;
 	private java.util.Timer timer;
 	private static int compteurTemps = 0;
+	boolean lecture = false;
 	//private HashMap<>
 	
 	@Override
@@ -113,12 +114,6 @@ public class EarthTest extends SimpleApplication
 		
 		listRf = MainSystem.getRealTimeFlight();
 		
-		/*
-		objet orienté pariel que le monde
-		lookAt pour s aligner regarder l aterre
-		si on fais avancer reculer que altitude qui va changer*/
-		//while( !updatePositions() )
-		
 		updatePositions();
 		for( RealTimeFlight r : MainSystem.getRealTimeFlight().values() )
 		{	
@@ -135,18 +130,6 @@ public class EarthTest extends SimpleApplication
 			s.setMaterial(mat);
 			directionPlane(s,r,true);
 		}	
-		
-		/*
-		oldTimer = getTimer();
-		timer = new java.util.Timer();
-		timer.scheduleAtFixedRate(new TimerTask() 
-		{
-			@Override
-			public void run() 
-			{
-				updateEarth();	
-			}
-		}, 2*1000, 2*1000);*/
 		
 		//Afficher texte zine 3D
 		/*
@@ -209,12 +192,15 @@ public class EarthTest extends SimpleApplication
 	@Override
 	public void simpleUpdate(float tpf)
 	{
-		if(compteurTemps < 100000)
+		if(lecture)
 		{
-			updateEarth();
-			compteurTemps = 0;
+			if(compteurTemps < 100000)
+			{
+				updateEarth();
+				compteurTemps = 0;
+			}
+			compteurTemps++;
 		}
-		compteurTemps++;
 	}
 	
 	/** Declaring the "Shoot" action and mapping to its triggers. */
@@ -306,6 +292,13 @@ public class EarthTest extends SimpleApplication
 	public static Integer randBetween(int start, int end) 
     {
     	return start + (int)Math.round(Math.random() * (end - start));
+	}
+	public void setLecture()
+	{
+		if(lecture)
+			lecture = false;
+		else
+			lecture = true;
 	}
 	
 	public void drawTrajectory(Path path)
