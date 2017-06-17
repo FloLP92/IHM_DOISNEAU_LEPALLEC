@@ -4,6 +4,7 @@ import java.awt.MouseInfo;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.TimerTask;
 
 import javax.swing.JMenu;
@@ -39,8 +40,9 @@ public class EarthTest extends SimpleApplication
 	private static final float TEXTURE_LON_OFFSET = 2.8f;
 	Node earth_node;
 	Node LinesNode,SpheresNode,PlanesNode;
-	private HashMap<String,RealTimeFlight> rf;
+	private HashMap<String,RealTimeFlight> listRf;
 	private HashMap<String,Flight> listFlights;
+	private HashMap<Spatial,RealTimeFlight> listPlaneRf;
 	private float chLat,chLong;
 	private Vector3f oldVect, newVect;
 	private static Plane plane;
@@ -71,6 +73,8 @@ public class EarthTest extends SimpleApplication
 		earth_node.attachChild(earth_geom);
 		//earth_node.setLocalScale(5.0f);
 		rootNode.attachChild(earth_node);
+		
+		listPlaneRf = new HashMap<>();
 		
 		AmbientLight ambientlLight = new AmbientLight();
 		ambientlLight.setColor(ColorRGBA.White.mult(1.7f));
@@ -107,7 +111,7 @@ public class EarthTest extends SimpleApplication
 		//-----------------------------------------------------------------
 		
 		
-		rf = MainSystem.getRealTimeFlight();
+		listRf = MainSystem.getRealTimeFlight();
 		
 		/*
 		objet orienté pariel que le monde
@@ -128,20 +132,8 @@ public class EarthTest extends SimpleApplication
 			Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
 			mat.getAdditionalRenderState().setLineWidth(4.0f);
 			mat.setColor("Color", tabColor[randBetween(0, 10)]);
-			s.setLocalScale(0.03f);
 			s.setMaterial(mat);
-			s.move(oldVect);
-			s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
-			s.rotate((float)Math.PI/2,0,0);
-			s.rotate(0,0,r.getDirection());
-			r.addSpatial(s);
-			r.getPath().addPos(r);
-			//rotation axe des z puis move up axe des y 
-			//Vector3f w = new Vector3f(0,0,3);
-			//Vector3f up = s.getLocalRotation().mult(new Vector3f(0,0,-1.0f));
-			//s.move(up);
-			//s.rotate(0,0,r.getDirection());
-			PlanesNode.attachChild(s);	
+			directionPlane(s,r,true);
 		}	
 		
 		/*
@@ -256,7 +248,8 @@ public class EarthTest extends SimpleApplication
 					mat.getAdditionalRenderState().setLineWidth(4.0f);
 					mat.setColor("Color", ColorRGBA.Red);
 					planeSelected.setMaterial(mat);
-					
+					RealTimeFlight rfSelected = listPlaneRf.get(planeSelected);
+					cam.lookAt(new Vector3f(0,0,0),planeSelected.getWorldTranslation());
 				} 
 			}
 			
@@ -313,69 +306,76 @@ public class EarthTest extends SimpleApplication
 	public static Integer randBetween(int start, int end) 
     {
     	return start + (int)Math.round(Math.random() * (end - start));
-	}/*
+	}
+	
 	public void drawTrajectory(Path path)
 	{
 		Vector3f vec1 = new Vector3f(0,0,0);
 		Vector3f vec2;
 		for(RealTimeFlight r : path.getListPos())
 		{
-			
-			for(int i=0;i<100;i++)
-			{
-				float t=i/5.0f;
-				if(path.getListPos().indexOf(r)==0)
-				{
-					vec1 =
-				}
-				Vector3f newVect = new Vector3f(FastMath.cos(t),t/5.0f,FastMath.sin(t));
-				Line line = new Line(vec1, newVect);
-				Geometry lineGeo = new Geometry("lineGeo", line);
-				Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
-				mat.getAdditionalRenderState().setLineWidth(4.0f);
-				mat.setColor("Color", ColorRGBA.Red);
-				lineGeo.setMaterial(mat);
-				lineGeo.setLocalTranslation(0.0f,0.0f,8.0f);
-				LinesNode.setMaterial(mat);
-				LinesNode.attachChild(lineGeo);
-				rootNode.attachChild(LinesNode);
-				vec1 = newVect;
-			}
+			//float t=i/5.0f;
+			vec2 = geoCoordTo3dCoord(r.getLatitude(), r.getLongitude());
+			vec2 = vec2.mult((60*r.getAltitude()+6371000)/6371000);
+			Line line = new Line(vec1, vec2);
+			Geometry lineGeo = new Geometry("lineGeo", line);
+			Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
+			mat.getAdditionalRenderState().setLineWidth(4.0f);
+			mat.setColor("Color", ColorRGBA.Red);
+			lineGeo.setMaterial(mat);
+			lineGeo.setLocalTranslation(0.0f,0.0f,8.0f);
+			LinesNode.setMaterial(mat);
+			LinesNode.attachChild(lineGeo);
+			rootNode.attachChild(LinesNode);
+
+			vec1 = vec2;		
 		}
-	}*/
+	}
+	public void directionPlane(Spatial s,RealTimeFlight r,boolean newS)
+	{
+		chLat = r.getLatitude();
+		chLong = r.getLongitude();
+		oldVect = geoCoordTo3dCoord(chLat,chLong);
+		if(newS)
+		{
+			s.setLocalScale(0.03f);
+			r.addSpatial(s);
+			listPlaneRf.put(s,r);	
+			PlanesNode.attachChild(s);	
+			r.getPath().addPos(r);
+		}
+		else
+		{
+			s.setLocalTranslation(0,0,0);
+		}
+		s.move(oldVect);
+		s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
+		s.rotate((float)Math.PI/2,0,0);
+		s.rotate(0,0,r.getDirection());
+		r.getPath().addPos(r);
+		Vector3f up = s.getLocalRotation().mult(new Vector3f(0,-1.0f,0));
+		//s.move(up);
+		//s.rotate(0,0,r.getDirection());
+	}
 	public void updateEarth()
 	{
 		updatePositions();
 		Spatial s;
-		for( RealTimeFlight r : MainSystem.getRealTimeFlight().values() )
-		{	
-			
+		Iterator<RealTimeFlight> iter = MainSystem.getRealTimeFlight().values().iterator();
+		while (iter.hasNext()) 
+		{
+			RealTimeFlight r = iter.next();
 			if( !PlanesNode.hasChild(r.getSpatial()) )
 			{
-				s = assetManager.loadModel("earth/plane.obj");/*
+				s = assetManager.loadModel("earth/plane.obj");
 			    DirectionalLight sun = new DirectionalLight();
 			    sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
-			    s.addLight(sun);*/
-				chLat = r.getLatitude();
-				chLong = r.getLongitude();
-				oldVect = geoCoordTo3dCoord(chLat,chLong);
+			    s.addLight(sun);
+				
 				Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
 				mat.getAdditionalRenderState().setLineWidth(4.0f);
 				mat.setColor("Color", tabColor[randBetween(0, 10)]);
-				s.setLocalScale(0.03f);
-				s.setMaterial(mat);
-				s.move(oldVect);
-				s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
-				s.rotate((float)Math.PI/2,0,0);
-				s.rotate(0,0,r.getDirection());
-				r.addSpatial(s);
-				//rotation axe des z puis move up axe des y 
-				//Vector3f w = new Vector3f(0,0,3);
-				//Vector3f up = s.getLocalRotation().mult(new Vector3f(0,0,-1.0f));
-				//s.move(up);
-				//s.rotate(0,0,r.getDirection());
-				PlanesNode.attachChild(s);	
-				r.getPath().addPos(r);
+				directionPlane(s, r, true);
 			}
 			else
 			{
@@ -389,26 +389,22 @@ public class EarthTest extends SimpleApplication
 					float chLongDest = a. getLongitude();
 					s = r.getSpatial();
 
-					if(chLat == chLatDest && chLong == chLongDest)
+					if( (chLat == chLatDest && chLong == chLongDest)
+							||(r.getPositionSol()) )
 					{
-						System.out.println("rrr");
 						r.removeSpatial();
 						PlanesNode.detachChild(s);
-						displayTownEnd(chLat,chLong);
+						listPlaneRf.remove(s);
+						s.removeFromParent();
+						//PlanesNode.
+						iter.remove();
+						//displayTownEnd(chLat,chLong);
 					}
 					else
 					{
 						oldVect = geoCoordTo3dCoord(chLat,chLong);
-						s.setLocalTranslation(0,0,0);
-						s.move(oldVect);
-						s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
-						s.rotate((float)Math.PI/2,0,0);
-						s.rotate(0,0,r.getDirection());
-						r.getPath().addPos(r);
-						//Vector3f up = s.getLocalRotation().mult(new Vector3f(0,0,-1.0f));
-						//s.move(up);
+						directionPlane(s,r,false);
 					}	
-					PlanesNode.attachChild(s);	
 				}
 			}
 		}	
