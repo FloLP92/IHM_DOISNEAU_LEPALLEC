@@ -61,4 +61,7 @@ public class Airport
 		return listDestination;
 	}
 
+	public String toString(){
+		return idIATA+" ("+pays.toString()+" - "+ville+" )";
+	}
 }
