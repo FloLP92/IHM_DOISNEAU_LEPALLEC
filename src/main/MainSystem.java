@@ -269,38 +269,20 @@ public class MainSystem
 
 		JLabel jlab = new JLabel("Selectionnez un avion :");
 		Object[] elements = new Object[]{"Element 1", "Element 2", "Element 3", "Element 4", "Element 5"};
-		JTextArea infosAvion = new JTextArea("Ici apparaitera les informations sur l'avion selectionne ...");
-		infosAvion.setWrapStyleWord(true);
-		JComboBox j = new JComboBox();
-		j.addItem(" Aucun Avion selectionne");
-		for (HashMap.Entry<String,Flight> entry : listFlights.entrySet()){
-			j.addItem(""+entry.getKey());
-		}
-		j = trierCombo(j);
+		JComboBox j = new JComboBox(elements);
 		JButton vue = new JButton(new ImageIcon("ressources/view_icon.png"));
-		j.addItemListener(new ItemListener() {
-		     @Override
-		     public void itemStateChanged(ItemEvent e) {
-		    	 if(e.getStateChange() == 1){//Nouvel objet
-		    		 System.out.println(listFlights.get(e.getItem()));
-		    		 infosAvion.setText(listFlights.get(e.getItem()).toString());
-		    	 }
-		     }
-		 });
+		
 		gbc1.gridx=0;
 		gbc1.gridy=0;
 		gbc1.ipadx = 80;
-		gbc1.gridwidth = 1;
+		gbc1.gridwidth = 3;
 		gbc1.gridheight = 1;
 		gbc1.insets = new Insets(10,10,10,10);
 		panelAvion.add(jlab,gbc1);
 		gbc1.gridy=1;
-		gbc1.gridx=0;
-		gbc1.gridwidth = 2;
 		gbc1.fill = GridBagConstraints.HORIZONTAL;
 		panelAvion.add(j,gbc1);
-		gbc1.gridheight = 1;
-		gbc1.gridwidth=3;
+		gbc1.fill = 0;
 		gbc1.gridy=2;
 		gbc1.weightx = 1;
 		gbc1.weighty = 3;
@@ -323,10 +305,12 @@ public class MainSystem
 		JRadioButton sortants = new JRadioButton("sortants");
 		radioButtons.add(entrants);
 		radioButtons.add(sortants);
+		Object[] elements2 = new Object[]{"Element 1", "Element 2", "Element 3", "Element 4", "Element 5"};
+		Object[] elements3 = new Object[]{"Element 1", "Element 2", "Element 3", "Element 4", "Element 5"};
 		JComboBox paysSelected = new JComboBox();
-		paysSelected.addItem(" Aucun Pays selectionne");
-		for (HashMap.Entry<String,Pays> entry : listPays.entrySet()){
-			paysSelected.addItem(""+entry.getKey());
+		paysSelected.addItem("Aucun Pays selectionne");
+		for(int i=0;i<listPays.size();i++){
+			//paysSelected.addItem(listPays.get(i).getNomPays());
 		}
 		paysSelected = trierCombo(paysSelected);
 		
@@ -338,6 +322,19 @@ public class MainSystem
 			aeroportSelected.addItem(""+entry.getKey());
 		}
 		aeroportSelected = trierCombo(aeroportSelected);
+		
+		paysSelected.addItemListener(new ItemListener() {
+		     @Override
+		     public void itemStateChanged(ItemEvent e) {
+		    	 if(e.getStateChange() == 1){//Nouvel objet
+		    		 //On update la liste des aeroports par rapport a la liste des pays
+		    		 System.out.println(listPays.get(e.getItem()));
+		    		 
+		    	 }
+		     }
+		 });
+		
+		
 		gbc2.gridx = 0;
 		gbc2.gridy = 0;
 		gbc2.ipadx = 80;
@@ -517,24 +514,6 @@ public class MainSystem
 		new MainSystem();
 	}
 	
-	
-	public static JComboBox trierCombo (JComboBox Combo){
-		Object aux;
-		int indice = Combo.getItemCount();
-		 
-		for(int i=0;i<indice-1;i++){
-			for(int j=i+1;j<indice;j++){
-				if(Combo.getItemAt(i).toString().compareTo(Combo.getItemAt(j).toString()) > 0){
-					aux = Combo.getItemAt(i);
-					Combo.removeItemAt(i);
-					Combo.insertItemAt(Combo.getItemAt(j-1),i);
-					Combo.removeItemAt(j);
-					Combo.insertItemAt(aux,j-1);
-				}
-		    }
-		}
-		return Combo;
-	}
 	
 	
 	
