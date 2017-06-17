@@ -28,6 +28,7 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -134,7 +135,9 @@ public class MainSystem
 				pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
 
 				JTextArea cautionText = new JTextArea(
-						"Add some text here to describe the controls \n" + '\n');
+						"Le panel de contrôle de gauche se décompose en 3 parties : partie gestion de la lecture du fichier"
+						+ ", la partie séléction d'un vol particuler et un filtre des vols et aéroports.\n Le panel de gauche correspond à la vue de l'application"
+						+ " qui prend notamment en compte les paramètres du panel de gauche.  \n" + '\n');
 				cautionText.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 				cautionText.setEditable(false);
 				pane.add(cautionText);
@@ -165,7 +168,7 @@ public class MainSystem
 		
 		
 		//Partie 2D de gauche
-	   
+	
 		
 		Container c = new Container();
 		//Global Part
@@ -179,7 +182,7 @@ public class MainSystem
 		
 		JLabel statut = new JLabel("Statut :");
 		JButton lectureAction = new JButton(new ImageIcon("ressources/play_icon.png"));
-		
+		JLabel lectureStatut = new JLabel("Reprendre la lecture");
 		final int vitesseMin = 1;
 		final int vitesseMax = 10;
 		JSlider vitesseLecture = new JSlider(JSlider.HORIZONTAL,vitesseMin,vitesseMax,vitesseMin);
@@ -192,15 +195,39 @@ public class MainSystem
 		gbc.ipadx = 80;
 		gbc.gridwidth = 1;
 		gbc.gridheight = 1;
-		gbc.insets = new Insets(10,0,10,0);
+		gbc.insets = new Insets(10,10,10,0);
 		panelLecture.add(statut,gbc);
 		gbc.gridy=1;
+		gbc.gridwidth = 2;
 		panelLecture.add(lectureAction,gbc);
+		gbc.gridx=2;
+		gbc.gridwidth = 1;
+		panelLecture.add(lectureStatut,gbc);
 		gbc.gridy=2;
+		gbc.gridx=0;
+		gbc.gridwidth = 3;
 		gbc.fill=GridBagConstraints.HORIZONTAL;
 		panelLecture.add(vitesseLecture,gbc);
 		panelLecture.setBorder(BorderFactory.createTitledBorder(
 	                "Lecture du fichier"));
+		
+		lectureAction.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				if(lectureStatut.getText().equals("Reprendre la lecture")){//On était en pause
+					lectureAction.setIcon(new ImageIcon("ressources/pause_icon.png"));
+					lectureStatut.setText("Arreter la lecture");
+					
+				}
+				else{
+					lectureAction.setIcon(new ImageIcon("ressources/play_icon.png"));
+					lectureStatut.setText("Reprendre la lecture");
+				}
+			}
+		});
+		
+		
+		
 		//Partie Selection Avion
 		JPanel panelAvion = new JPanel(new GridBagLayout());
 		GridBagConstraints gbc1 = new GridBagConstraints();
@@ -214,18 +241,16 @@ public class MainSystem
 		gbc1.gridx=0;
 		gbc1.gridy=0;
 		gbc1.ipadx = 80;
-		gbc1.gridwidth = 1;
+		gbc1.gridwidth = 3;
 		gbc1.gridheight = 1;
 		gbc1.insets = new Insets(10,10,10,10);
-		gbc1.fill=0;
 		panelAvion.add(jlab,gbc1);
 		gbc1.gridy=1;
-		gbc1.gridwidth = 3;
-		gbc1.fill = 1;
+		gbc1.fill = GridBagConstraints.HORIZONTAL;
 		panelAvion.add(j,gbc1);
 		gbc1.fill = 0;
 		gbc1.gridy=2;
-		gbc1.gridx=0;
+		gbc1.gridx=1;
 		gbc1.gridwidth=1;
 		panelAvion.add(vue,gbc1);
 		panelAvion.setBorder(BorderFactory.createTitledBorder(
@@ -236,8 +261,11 @@ public class MainSystem
 		GridBagConstraints gbc2 = new GridBagConstraints();
 		
 		JLabel typeVol = new JLabel("Type vol :");
+		ButtonGroup radioButtons = new ButtonGroup();
 		JRadioButton entrants = new JRadioButton("entrants");
 		JRadioButton sortants = new JRadioButton("sortants");
+		radioButtons.add(entrants);
+		radioButtons.add(sortants);
 		Object[] elements2 = new Object[]{"Element 1", "Element 2", "Element 3", "Element 4", "Element 5"};
 		Object[] elements3 = new Object[]{"Element 1", "Element 2", "Element 3", "Element 4", "Element 5"};
 		JComboBox paysSelected = new JComboBox();
