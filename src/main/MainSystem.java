@@ -260,7 +260,7 @@ public class MainSystem
 		gbc1.ipadx = 80;
 		gbc1.gridwidth = 1;
 		gbc1.gridheight = 1;
-		gbc1.insets = new Insets(10,10,10,0);
+		gbc1.insets = new Insets(10,10,10,10);
 		panelAvion.add(jlab,gbc1);
 		gbc1.gridy=1;
 		gbc1.gridx=0;
@@ -270,6 +270,8 @@ public class MainSystem
 		gbc1.gridheight = 1;
 		gbc1.gridwidth=3;
 		gbc1.gridy=2;
+		gbc1.weightx = 1;
+		gbc1.weighty = 3;
 		panelAvion.add(infosAvion,gbc1);
 		gbc1.fill = GridBagConstraints.NONE;
 		gbc1.gridy=5;
@@ -295,12 +297,28 @@ public class MainSystem
 			paysSelected.addItem(""+entry.getKey());
 		}
 		paysSelected = trierCombo(paysSelected);
+		
+
+		
 		JComboBox aeroportSelected = new JComboBox();
 		aeroportSelected.addItem(" Aucun Aeroport selectionne");
 		for (HashMap.Entry<String,Airport> entry : listAirports.entrySet()){
 			aeroportSelected.addItem(""+entry.getKey());
 		}
 		aeroportSelected = trierCombo(aeroportSelected);
+		
+		paysSelected.addItemListener(new ItemListener() {
+		     @Override
+		     public void itemStateChanged(ItemEvent e) {
+		    	 if(e.getStateChange() == 1){//Nouvel objet
+		    		 //On update la liste des aeroports par rapport a la liste des pays
+		    		 System.out.println(listPays.get(e.getItem()));
+		    		 
+		    	 }
+		     }
+		 });
+		
+		
 		gbc2.gridx = 0;
 		gbc2.gridy = 0;
 		gbc2.ipadx = 80;
@@ -498,5 +516,7 @@ public class MainSystem
 		}
 		return Combo;
 	}
+	
+	
 	
 }
