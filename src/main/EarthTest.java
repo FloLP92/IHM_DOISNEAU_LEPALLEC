@@ -35,7 +35,7 @@ public class EarthTest extends SimpleApplication
 	private static final float TEXTURE_LAT_OFFSET = -0.2f;
 	private static final float TEXTURE_LON_OFFSET = 2.8f;
 	Node earth_node;
-	Node LinesNode,SpheresNode,PlanesNode;
+	Node LinesNode,PlanesNode,AeroportsNode;
 	private HashMap<String,RealTimeFlight> listRf;
 	private HashMap<String,Flight> listFlights;
 	private HashMap<Spatial,RealTimeFlight> listPlaneRf;
@@ -63,7 +63,7 @@ public class EarthTest extends SimpleApplication
 		menubar.add(helpMenu);
 		
 		LinesNode = new Node("LinesNode");
-		SpheresNode = new Node("SpheresNode");
+		AeroportsNode = new Node("AeroportsNode");
 		PlanesNode = new Node("PlanesNode");
 		assetManager.registerLocator("earth.zip", ZipLocator.class);
 		Spatial earth_geom = assetManager.loadModel("earth/Sphere.mesh.xml");
@@ -110,23 +110,26 @@ public class EarthTest extends SimpleApplication
 		
 		
 		listRf = MainSystem.getRealTimeFlight();
+		if(lecture)
+		{
+			updatePositions();
+			for( RealTimeFlight r : MainSystem.getRealTimeFlight().values() )
+			{	
+				Spatial s = assetManager.loadModel("earth/plane.obj");
+				Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
+				mat.getAdditionalRenderState().setLineWidth(4.0f);
+				mat.setColor("Color", tabColor[randBetween(0, 10)]);
+				s.setMaterial(mat);
+			    DirectionalLight sun = new DirectionalLight();
+			    sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
+			    s.addLight(sun);
+				chLat = r.getLatitude();
+				chLong = r.getLongitude();
+				oldVect = geoCoordTo3dCoord(chLat,chLong);
+				directionPlane(s,r,true);
+			}	
+		}
 		
-		updatePositions();
-		for( RealTimeFlight r : MainSystem.getRealTimeFlight().values() )
-		{	
-			Spatial s = assetManager.loadModel("earth/plane.obj");
-		    DirectionalLight sun = new DirectionalLight();
-		    sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
-		    s.addLight(sun);
-			chLat = r.getLatitude();
-			chLong = r.getLongitude();
-			oldVect = geoCoordTo3dCoord(chLat,chLong);
-			Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
-			mat.getAdditionalRenderState().setLineWidth(4.0f);
-			mat.setColor("Color", tabColor[randBetween(0, 10)]);
-			s.setMaterial(mat);
-			directionPlane(s,r,true);
-		}	
 		
 		//Afficher texte zine 3D
 		/*
@@ -161,7 +164,7 @@ public class EarthTest extends SimpleApplication
 		LinesNode.setMaterial(mat);
 		LinesNode.attachChild(lineGeo);*/
 		rootNode.attachChild(LinesNode);
-		rootNode.attachChild(SpheresNode);
+		rootNode.attachChild(AeroportsNode);
 		rootNode.attachChild(PlanesNode);
 		
 		
@@ -261,21 +264,8 @@ public class EarthTest extends SimpleApplication
 		sphereGeo.setMaterial(mat);
 		Vector3f v = geoCoordTo3dCoord(latitude,longitude);
 		sphereGeo.setLocalTranslation(v);
-		SpheresNode.setMaterial(mat);
-		SpheresNode.attachChild(sphereGeo);	
-	}
-	private void displayTownEnd(float latitude, float longitude)
-	{
-		Sphere sphere = new Sphere(16,8,0.02f);
-		Geometry sphereGeo = new Geometry("lineGeo", sphere);
-		Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
-		mat.getAdditionalRenderState().setLineWidth(4.0f);
-		mat.setColor("Color", ColorRGBA.Red);
-		sphereGeo.setMaterial(mat);
-		Vector3f v = geoCoordTo3dCoord(latitude,longitude);
-		sphereGeo.setLocalTranslation(v);
-		SpheresNode.setMaterial(mat);
-		SpheresNode.attachChild(sphereGeo);	
+		AeroportsNode.setMaterial(mat);
+		AeroportsNode.attachChild(sphereGeo);	
 	}
 	public static boolean updatePositions()
 	{
@@ -362,6 +352,25 @@ public class EarthTest extends SimpleApplication
 		//s.move(up);
 		//s.rotate(0,0,r.getDirection());
 		 */
+	}
+	public void displayAirportPays(Pays pays)
+	{
+		AeroportsNode.detachAllChildren();
+		if(pays != null)
+		{
+			for (Airport value : pays.getListAirports()) 
+			{
+				displayTown(value.getLatitude(),value.getLongitude());  
+			}
+		}
+		else
+		{
+			for (Airport value : MainSystem.getListAirports().values()) 
+			{
+				displayTown(value.getLatitude(),value.getLongitude());  
+			}
+		}
+		
 	}
 	public void updateEarth()
 	{

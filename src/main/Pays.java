@@ -56,8 +56,11 @@ public class Pays
 	public void setNomPays(String nomPays) {
 		this.nomPays = nomPays;
 	}
-	
 	public String toString(){
 		return nomPays;
+	}
+	public ArrayList<Airport> getListAirports()
+	{
+		return listAirports;
 	}
 }

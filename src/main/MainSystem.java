@@ -54,6 +54,7 @@ public class MainSystem
 	private static JPanel panel;
 	private static EarthTest app;
 	private static Canvas canvas; // JAVA Swing Canvas
+	private static Pays paysSelection;
 	
 	
 	public MainSystem()
@@ -332,6 +333,7 @@ public class MainSystem
 		    		innerAero.removeAllItems();
 		    		if(pays.equals(" Aucun Pays selectionne")){
 		    			innerAero.addItem(" Aucun Aeroport selectionne");
+		    			paysSelection = null;
 		    			for (HashMap.Entry<String,Airport> entry : listAirports.entrySet()){
 		    				innerAero.addItem(entry.getValue().getIdIATA());
 		    			}
@@ -342,6 +344,7 @@ public class MainSystem
 			    			String pays2 = entry.getValue().getPays().getNomPays();
 			    			if(pays2.equals(pays)){
 			    				innerAero.addItem(entry.getValue().getIdIATA());
+			    				paysSelection = listPays.get(pays);
 			    				JComboBox innerAero2 = trierCombo(innerAero);
 			    			}
 			    		}
@@ -384,12 +387,25 @@ public class MainSystem
 	    panelVols.setBorder(BorderFactory.createTitledBorder(
                 "Filtrer les vols"));
 	    
+	    appliquerFiltre.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				app.enqueue(new Callable<Object>()
+				{
+					public Object call() throws Exception
+					{
+						app.displayAirportPays(paysSelection);
+						return null;}
+				});
+			}
+		});
 	    
 		annulerFiltre.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
 				//Clear des JRadioButtons
-				radioButtons.clearSelection();
+				//radioButtons.clearSelection();
 				
 				//Clear de la Box des aeros
 				/*innerAero.removeAllItems();
@@ -400,7 +416,14 @@ public class MainSystem
 				}*/
 				
 				//Clear de la box des pays
-				innerPays.setSelectedItem(" Aucun Pays selectionne");
+				//innerPays.setSelectedItem(" Aucun Pays selectionne");
+				app.enqueue(new Callable<Object>()
+				{
+					public Object call() throws Exception
+					{
+						app.displayAirportPays(null);
+						return null;}
+				});
 				
 			}
 		});
