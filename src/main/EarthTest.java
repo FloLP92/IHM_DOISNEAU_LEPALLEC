@@ -1,12 +1,8 @@
 package main;
 
-import java.awt.MouseInfo;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.TimerTask;
-
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import com.jme3.app.SimpleApplication;
