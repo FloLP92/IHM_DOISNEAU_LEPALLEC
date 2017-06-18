@@ -351,7 +351,7 @@ public class MainSystem
 		    				innerAero.addItem(entry.getValue().getIdIATA());
 		    			}
 		    			JComboBox innerAero2 = trierCombo(innerAero);
-		    		}
+		    		}//
 		    		else{
 			    		for (HashMap.Entry<String,Airport> entry : listAirports.entrySet()){
 			    			String pays2 = entry.getValue().getPays().getNomPays();
