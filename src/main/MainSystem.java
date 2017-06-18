@@ -320,34 +320,60 @@ public class MainSystem
 		JRadioButton sortants = new JRadioButton("sortants");
 		radioButtons.add(entrants);
 		radioButtons.add(sortants);
-		JComboBox paysSelected = new JComboBox();
-		paysSelected.addItem(" Aucun Pays selectionne");
-		for (HashMap.Entry<String,Pays> entry : listPays.entrySet()){
-			paysSelected.addItem(""+entry.getKey());
-		}
-		paysSelected = trierCombo(paysSelected);
-		JComboBox<String> aeroportSelected = new JComboBox<String>();
+		
+		JComboBox aeroportSelected = new JComboBox();
+		final JComboBox innerAero = aeroportSelected; //Duplication pour etre utilise dans les listeners
 		aeroportSelected.addItem(" Aucun Aeroport selectionne");
 		for (HashMap.Entry<String,Airport> entry : listAirports.entrySet()){
 			aeroportSelected.addItem(""+entry.getKey());
 		}
 		aeroportSelected = trierCombo(aeroportSelected);
-
+		
+		JComboBox paysSelected = new JComboBox();
+		final JComboBox innerPays = paysSelected; //Duplication pour etre utilise dans les listeners
+		paysSelected.addItem(" Aucun Pays selectionne");
+		ArrayList <String> aeroportsEnCours = new ArrayList<String>();
+		for (HashMap.Entry<String,Pays> entry : listPays.entrySet()){
+			paysSelected.addItem(""+entry.getKey());
+		}
+		paysSelected = trierCombo(paysSelected);
+		
 		paysSelected.addItemListener(new ItemListener() {
 		     @Override
 		     public void itemStateChanged(ItemEvent e) {
 		    	 if(e.getStateChange() == 1){//Nouvel objet
-		    		 //On update la liste des aeroports par rapport a la liste des pays
-		    		 System.out.println(listPays.get(e.getItem()));
+		    		String pays = e.getItem()+"";
+		    		//On update la liste des aeroports par rapport a la liste des pays
+		    		innerAero.removeAllItems();
+		    		if(pays.equals(" Aucun Pays selectionne")){
+		    			innerAero.addItem(" Aucun Aeroport selectionne");
+		    			for (HashMap.Entry<String,Airport> entry : listAirports.entrySet()){
+		    				innerAero.addItem(entry.getValue().getIdIATA());
+		    			}
+		    			JComboBox innerAero2 = trierCombo(innerAero);
+		    		}
+		    		else{
+			    		for (HashMap.Entry<String,Airport> entry : listAirports.entrySet()){
+			    			String pays2 = entry.getValue().getPays().getNomPays();
+			    			if(pays2.equals(pays)){
+			    				innerAero.addItem(entry.getValue().getIdIATA());
+			    				JComboBox innerAero2 = trierCombo(innerAero);
+			    			}
+			    		}
+		    		}
+		    		
 		    	 }
-		    	 //aeroportSelected.removeAll();
 		     }
+
 		 });
+		
+		JButton appliquerFiltre = new JButton("Appliquer le filtre");
+		JButton annulerFiltre = new JButton("Annuler le filtre");
 		
 		
 		gbc2.gridx = 0;
 		gbc2.gridy = 0;
-		gbc2.ipadx = 80;
+		gbc2.ipadx = 50;
 		gbc2.gridheight = 1;
 	    gbc2.gridwidth = 1;
 	    gbc2.insets = new Insets(10,10,10,10);
@@ -364,8 +390,36 @@ public class MainSystem
 	    panelVols.add(paysSelected,gbc2);
 	    gbc2.gridy = 3;
 	    panelVols.add(aeroportSelected,gbc2);
+	    gbc2.gridy =4;
+	    gbc2.fill =0;
+	    gbc2.gridwidth = 1;
+	    panelVols.add(annulerFiltre,gbc2);
+	    gbc2.gridx = 1;
+	    panelVols.add(appliquerFiltre,gbc2);
 	    panelVols.setBorder(BorderFactory.createTitledBorder(
                 "Filtrer les vols"));
+	    
+	    
+		annulerFiltre.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				//Clear des JRadioButtons
+				radioButtons.clearSelection();
+				
+				//Clear de la Box des aeros
+				/*innerAero.removeAllItems();
+				innerAero.addItem(" Aucun Aeroport Selectionne");
+				for (HashMap.Entry<String,Airport> entry : listAirports.entrySet()){
+					innerAero.addItem(entry.getValue().getIdIATA());
+					JComboBox innerAero2 = trierCombo(innerAero);
+				}*/
+				
+				//Clear de la box des pays
+				innerPays.setSelectedItem(" Aucun Pays selectionne");
+				
+			}
+		});
+	    
 	    
 	    //Partie global
 	    c.add(panelLecture);
@@ -542,6 +596,8 @@ public class MainSystem
 				return Combo;
 			}
 			
-	
+	public static void update(JComboBox combo){
+		
+	}
 	
 }
