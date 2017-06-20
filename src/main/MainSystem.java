@@ -55,6 +55,7 @@ public class MainSystem
 	private static EarthTest app;
 	private static Canvas canvas; // JAVA Swing Canvas
 	private static Pays paysSelection;
+	private static JTextArea infosAvion;
 	
 	
 	public MainSystem()
@@ -64,7 +65,6 @@ public class MainSystem
 		listPays = new HashMap<String,Pays>();
 		realTimeFlight = new HashMap<String,RealTimeFlight>();
 		listVectors = new HashMap<String,ArrayList<Vector3f>>();
-
 		
 		MainSystem.lireFichier("ressources/airports.dat");
 		MainSystem.lireFichier("ressources/flights.dat");
@@ -126,9 +126,9 @@ public class MainSystem
 				pane.setLayout(new BoxLayout(pane, BoxLayout.PAGE_AXIS));
 
 				JTextArea cautionText = new JTextArea(
-						"Le panel de contrôle de gauche se décompose en 3 parties : partie gestion de la lecture du fichier"
-						+ ", la partie séléction d'un vol particuler et un filtre des vols et aéroports.\n Le panel de gauche correspond à la vue de l'application"
-						+ " qui prend notamment en compte les paramètres du panel de gauche.  \n" + '\n');
+						"Le panel de contrï¿½le de gauche se dï¿½compose en 3 parties : partie gestion de la lecture du fichier"
+						+ ", la partie sï¿½lï¿½ction d'un vol particuler et un filtre des vols et aï¿½roports.\n Le panel de gauche correspond ï¿½ la vue de l'application"
+						+ " qui prend notamment en compte les paramï¿½tres du panel de gauche.  \n" + '\n');
 				cautionText.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 				cautionText.setEditable(false);
 				pane.add(cautionText);
@@ -219,7 +219,7 @@ public class MainSystem
 		lectureAction.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e){
-				if(lectureStatut.getText().equals("Reprendre la lecture")){//On était en pause
+				if(lectureStatut.getText().equals("Reprendre la lecture")){//On ï¿½tait en pause
 					lectureAction.setIcon(new ImageIcon("ressources/pause_icon.png"));
 					lectureStatut.setText("Arreter la lecture");
 					app.enqueue(new Callable<Object>()
@@ -254,7 +254,7 @@ public class MainSystem
 		panelAvion.setPreferredSize(new Dimension(400,200));
 
 		JLabel jlab = new JLabel("Selectionnez un avion :");
-		JTextArea infosAvion = new JTextArea("Ici apparaitera les informations sur l'avion selectionne ...");
+		infosAvion = new JTextArea("Ici apparaitera les informations sur l'avion selectionne ...");
 		infosAvion.setWrapStyleWord(true);
 		JComboBox j = new JComboBox();
 		j.addItem(" Aucun Avion selectionne");
@@ -267,7 +267,7 @@ public class MainSystem
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if(e.getStateChange() == 1){//Nouvel objet
-					System.out.println(listFlights.get(e.getItem()));
+					//System.out.println(listFlights.get(e.getItem()));
 					infosAvion.setText(listFlights.get(e.getItem()).toString());
 				}
 			}
@@ -606,6 +606,18 @@ public class MainSystem
 			
 	public static void update(JComboBox combo){
 		
+	}
+	public static void changeActualVol(String id)
+	{
+		try
+		{
+			infosAvion.setText(listFlights.get(id.replaceAll("\\s+","")).toString());
+		}
+		catch(NullPointerException e)
+		{
+			infosAvion.setText("Vol non prÃ©sent dans notre fichier");
+		}
+
 	}
 	
 }

@@ -45,11 +45,12 @@ public class EarthTest extends SimpleApplication
 	private static final ColorRGBA tabColor[] = {ColorRGBA.Blue,ColorRGBA.Pink,
 			ColorRGBA.Yellow,ColorRGBA.Gray,ColorRGBA.Cyan,ColorRGBA.Black,ColorRGBA.Magenta,
 			ColorRGBA.Orange,ColorRGBA.White,ColorRGBA.Green,ColorRGBA.BlackNoAlpha};
-	private Timer oldTimer;
-	private java.util.Timer timer;
 	private static int compteurTemps = 0;
 	boolean lecture = false;
 	private int vitesseLecture = 1;
+	private Spatial selectionPlane = null;
+	private Material colorRed;
+	private Material colorBlue;
 	//private HashMap<>
 	
 	@Override
@@ -71,6 +72,12 @@ public class EarthTest extends SimpleApplication
 		earth_node.attachChild(earth_geom);
 		//earth_node.setLocalScale(5.0f);
 		rootNode.attachChild(earth_node);
+		colorRed = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
+		colorRed.getAdditionalRenderState().setLineWidth(4.0f);
+		colorRed.setColor("Color", ColorRGBA.Red);
+		colorBlue = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
+		colorBlue.getAdditionalRenderState().setLineWidth(4.0f);
+		colorBlue.setColor("Color", ColorRGBA.Blue);
 		
 		listPlaneRf = new HashMap<>();
 		
@@ -87,7 +94,6 @@ public class EarthTest extends SimpleApplication
 		chaseCam.setMaxVerticalRotation((float)+Math.PI/2);
 		chaseCam.setMinDistance(2.5f);
 		chaseCam.setMaxDistance(30.0f);
-		
 		
 		
 		//-------------------AFFICHAGE AEROPORTS--------------------------
@@ -116,10 +122,7 @@ public class EarthTest extends SimpleApplication
 			for( RealTimeFlight r : MainSystem.getRealTimeFlight().values() )
 			{	
 				Spatial s = assetManager.loadModel("earth/plane.obj");
-				Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
-				mat.getAdditionalRenderState().setLineWidth(4.0f);
-				mat.setColor("Color", tabColor[randBetween(0, 10)]);
-				s.setMaterial(mat);
+				s.setMaterial(colorBlue);
 			    DirectionalLight sun = new DirectionalLight();
 			    sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
 			    s.addLight(sun);
@@ -230,11 +233,21 @@ public class EarthTest extends SimpleApplication
 					// The closest collision point is what was truly clicked:
 					CollisionResult selection = results.getClosestCollision();
 					Spatial planeSelected = selection.getGeometry();
-					Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
-					mat.getAdditionalRenderState().setLineWidth(4.0f);
-					mat.setColor("Color", ColorRGBA.Red);
-					planeSelected.setMaterial(mat);
+					
+					if(selectionPlane == null)
+					{
+						selectionPlane = planeSelected;
+						planeSelected.setMaterial(colorRed);
+					}
+					else
+					{
+						selectionPlane.setMaterial(colorBlue);
+						planeSelected.setMaterial(colorRed);
+						selectionPlane = planeSelected;
+					}
+					//MainSystem main = controller.getMain();
 					RealTimeFlight rfSelected = listPlaneRf.get(planeSelected);
+					MainSystem.changeActualVol(rfSelected.getIdVol());
 					cam.lookAt(new Vector3f(0,0,0),planeSelected.getWorldTranslation());
 				} 
 			}
@@ -303,12 +316,9 @@ public class EarthTest extends SimpleApplication
 			vec2 = vec2.mult((60*r.getAltitude()+6371000)/6371000);
 			Line line = new Line(vec1, vec2);
 			Geometry lineGeo = new Geometry("lineGeo", line);
-			Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
-			mat.getAdditionalRenderState().setLineWidth(4.0f);
-			mat.setColor("Color", ColorRGBA.Red);
-			lineGeo.setMaterial(mat);
+			lineGeo.setMaterial(colorRed);
 			lineGeo.setLocalTranslation(0.0f,0.0f,8.0f);
-			LinesNode.setMaterial(mat);
+			LinesNode.setMaterial(colorRed);
 			LinesNode.attachChild(lineGeo);
 			rootNode.attachChild(LinesNode);
 
@@ -327,19 +337,21 @@ public class EarthTest extends SimpleApplication
 			listPlaneRf.put(s,r);	
 			PlanesNode.attachChild(s);	
 			r.getPath().addPos(r);
-		}
+		}/*
 		else
 		{
 			s.setLocalTranslation(0,0,0);
-		}
-		s.move(oldVect);
+		}*/
+		s.setLocalTranslation(oldVect);
+		//s.move(oldVect);
 		s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
 		s.rotate((float)Math.PI/2,0,0);
-		//s.rotate(0,0,(loat)Math.toRadians(r.getDirection()));
+		s.rotate(0,0,(float)Math.toRadians(r.getDirection()));
+		//s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
 		s.rotate(0,r.getDirection(),0);
 		Vector3f up = s.getLocalRotation().mult(new Vector3f(0,-1.0f,0));
-		s.move(up.mult(0.07f));
-
+		s.move(up.mult(0.05f));
+		
 		//s.rotate(0,r.getDirection(),0);
 
 		
@@ -386,10 +398,7 @@ public class EarthTest extends SimpleApplication
 			    DirectionalLight sun = new DirectionalLight();
 			    sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
 			    s.addLight(sun);
-				
-				Material mat = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
-				mat.getAdditionalRenderState().setLineWidth(4.0f);
-				mat.setColor("Color", tabColor[randBetween(0, 10)]);
+				s.setMaterial(colorBlue);
 				directionPlane(s, r, true);
 			}
 			else
