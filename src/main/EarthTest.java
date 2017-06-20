@@ -233,18 +233,7 @@ public class EarthTest extends SimpleApplication
 					// The closest collision point is what was truly clicked:
 					CollisionResult selection = results.getClosestCollision();
 					Spatial planeSelected = selection.getGeometry();
-					
-					if(selectionPlane == null)
-					{
-						selectionPlane = planeSelected;
-						planeSelected.setMaterial(colorRed);
-					}
-					else
-					{
-						selectionPlane.setMaterial(colorBlue);
-						planeSelected.setMaterial(colorRed);
-						selectionPlane = planeSelected;
-					}
+					selectionColor(planeSelected);
 					//MainSystem main = controller.getMain();
 					RealTimeFlight rfSelected = listPlaneRf.get(planeSelected);
 					MainSystem.changeActualVol(rfSelected.getIdVol());
@@ -383,6 +372,20 @@ public class EarthTest extends SimpleApplication
 			}
 		}
 		
+	}
+	public void selectionColor(Spatial s)
+	{
+		if(selectionPlane == null)
+		{
+			selectionPlane = s;
+			s.setMaterial(colorRed);
+		}
+		else
+		{
+			selectionPlane.setMaterial(colorBlue);
+			s.setMaterial(colorRed);
+			selectionPlane = s;
+		}
 	}
 	public void updateEarth()
 	{

@@ -269,6 +269,13 @@ public class MainSystem
 				if(e.getStateChange() == 1){//Nouvel objet
 					//System.out.println(listFlights.get(e.getItem()));
 					infosAvion.setText(listFlights.get(e.getItem()).toString());
+					app.enqueue(new Callable<Object>()
+					{
+						public Object call() throws Exception
+						{
+							app.selectionColor(realTimeFlight.get(e.getItem()).getSpatial());
+							return null;}
+					});
 				}
 			}
 		});
