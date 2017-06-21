@@ -347,8 +347,10 @@ public class MainSystem
 		    			JComboBox innerAero2 = trierCombo(innerAero);
 		    		}//
 		    		else{
+		    			innerAero.addItem(" Aucun Aeroport selectionne");
 			    		for (HashMap.Entry<String,Airport> entry : listAirports.entrySet()){
 			    			String pays2 = entry.getValue().getPays().getNomPays();
+			    			
 			    			if(pays2.equals(pays)){
 			    				innerAero.addItem(entry.getValue().getIdIATA());
 			    				paysSelection = listPays.get(pays);
@@ -402,8 +404,16 @@ public class MainSystem
 				{
 					public Object call() throws Exception
 					{
-						app.displayAirportPays(paysSelection);
-						return null;}
+						if(innerAero.getSelectedItem().equals(" Aucun Aeroport selectionne"))
+							app.displayAirportPays(paysSelection);
+						else{
+							Airport airportSelected = listAirports.get(innerAero.getSelectedItem());
+							System.out.println(innerAero.getSelectedIndex());
+							app.displayAirportPays(airportSelected);
+						}
+							return null;
+						
+					}
 				});
 			}
 		});
@@ -428,7 +438,7 @@ public class MainSystem
 				{
 					public Object call() throws Exception
 					{
-						app.displayAirportPays(null);
+						app.displayAirportPays();
 						return null;}
 				});
 				

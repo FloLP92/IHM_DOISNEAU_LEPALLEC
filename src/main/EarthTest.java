@@ -373,6 +373,27 @@ public class EarthTest extends SimpleApplication
 		}
 		
 	}
+	public void displayAirportPays(Airport a){
+		AeroportsNode.detachAllChildren();
+		if(a != null){
+			displayTown(a.getLatitude(),a.getLongitude());  
+		}
+		else{
+			for (Airport value : MainSystem.getListAirports().values()) 
+			{
+				displayTown(value.getLatitude(),value.getLongitude());  
+			}
+		}
+	}
+	 public void displayAirportPays(){
+		AeroportsNode.detachAllChildren();
+		for (Airport value : MainSystem.getListAirports().values()) 
+		{
+			displayTown(value.getLatitude(),value.getLongitude());  
+		}
+	 }
+	
+	
 	public void selectionColor(Spatial s)
 	{
 		if(selectionPlane == null)
