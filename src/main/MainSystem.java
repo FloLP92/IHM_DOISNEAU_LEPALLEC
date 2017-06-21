@@ -25,6 +25,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -35,6 +36,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
@@ -267,6 +269,9 @@ public class MainSystem
 		infosAvion = new JTextArea("Ici apparaitera les informations sur l'avion selectionne ...");
 		infosAvion.setWrapStyleWord(true);
 		infosAvion.setFont(new Font("Tahoma", Font.BOLD, 12));
+		JScrollPane scrolltxt = new JScrollPane(infosAvion,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrolltxt.setWheelScrollingEnabled(true); 
+        scrolltxt.getVerticalScrollBar().isVisible();
 		JComboBox j = new JComboBox();
 		j.setBackground(new Color(59, 89, 182));
 		j.setForeground(Color.WHITE);
@@ -307,13 +312,16 @@ public class MainSystem
 		panelAvion.add(jlab,gbc1);
 		gbc1.gridy=1;
 		panelAvion.add(j,gbc1);
-		gbc1.gridheight = 1;
-		gbc1.gridwidth=3;
+		gbc1.gridheight = 3;
+		gbc1.gridwidth=10;
 		gbc1.gridy=2;
-		gbc1.fill = GridBagConstraints.VERTICAL;
-		gbc1.weightx = 3;
+		gbc1.fill = GridBagConstraints.BOTH;
+		gbc1.weightx = 10;
 		gbc1.weighty = 3;
-		panelAvion.add(infosAvion,gbc1);
+		gbc1.ipady = 70; 
+		panelAvion.add(scrolltxt,gbc1);
+		gbc1.ipady=0;
+		gbc1.gridheight = 1;
 		gbc1.fill = GridBagConstraints.NONE;
 		gbc1.gridy=5;
 		gbc1.gridx=0;
@@ -334,12 +342,16 @@ public class MainSystem
 		entrants.setFocusPainted(false);
 		entrants.setFont(new Font("Tahoma", Font.BOLD, 12));
 		entrants.setActionCommand("entrants");
+		entrants.setMnemonic(0);
 		JRadioButton sortants = new JRadioButton("sortants");
 		sortants.setFocusPainted(false);
 		sortants.setFont(new Font("Tahoma", Font.BOLD, 12));
+		sortants.setMnemonic(1);
 		entrants.setActionCommand("sortants");
+		
 		radioButtons.add(entrants);
 		radioButtons.add(sortants);
+		
 		
 		JComboBox aeroportSelected = new JComboBox();
 		aeroportSelected.setBackground(new Color(59, 89, 182));
@@ -446,21 +458,28 @@ public class MainSystem
 				{
 					public Object call() throws Exception
 					{
+				       
+
 						if(innerAero.getSelectedItem().equals(" Aucun Aeroport selectionne")){
 							app.displayAirportPays(paysSelection);
-							if(radioButtons.getSelection().getActionCommand().equals("entrants"))
-								app.displayPlaneFrom(paysSelection);
-							else if(radioButtons.getSelection().getActionCommand().equals("sortants"))
+							String result = radioButtons.getSelection().getActionCommand();
+					        if(radioButtons.getSelection().getMnemonic()==0){
+					        	app.displayPlaneFrom(paysSelection);
+					        }
+							else if(radioButtons.getSelection().getMnemonic()==1){
 								app.displayPlaneTo(paysSelection);
+							}
 						}
 						else{
 							Airport airportSelected = listAirports.get(innerAero.getSelectedItem());
 							System.out.println(innerAero.getSelectedIndex());
 							app.displayAirportPays(airportSelected);
-							if(radioButtons.getSelection().getActionCommand().equals("entrants"))
-								app.displayPlaneFrom(airportSelected);
-							else if(radioButtons.getSelection().getActionCommand().equals("sortants"))
+					        if(radioButtons.getSelection().getMnemonic()==0){
+					        	app.displayPlaneFrom(airportSelected);
+					        }
+							else if(radioButtons.getSelection().getMnemonic()==1){
 								app.displayPlaneTo(airportSelected);
+							}
 						}
 							return null;
 						

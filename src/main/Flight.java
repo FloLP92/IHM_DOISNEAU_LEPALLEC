@@ -51,7 +51,7 @@ public class Flight
 	}
 	public String toString()
 	{
-		return "Flight "+idVol+" "+airportDepart.toString()+" -> "+airportDestination.toString()
-				+" "+codeCompagnie+" "+modele;
+		return "Flight "+idVol+"\nDepart : "+airportDepart.toString()+"\nArrivee : "+airportDestination.toString()
+				+"\nCode compagnie : "+codeCompagnie+"\nModele : "+modele;
 	}
 }
