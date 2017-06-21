@@ -9,6 +9,8 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
+import com.jme3.font.BitmapText;
+import com.jme3.font.Rectangle;
 import com.jme3.input.ChaseCamera;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
@@ -22,6 +24,7 @@ import com.jme3.math.Plane;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -241,7 +244,18 @@ public class EarthTest extends SimpleApplication
 					//MainSystem main = controller.getMain();
 					RealTimeFlight rfSelected = listPlaneRf.get(planeSelected);
 					MainSystem.changeActualVol(rfSelected.getIdVol());
+					
+					Node text_node = new Node("texte");
+					guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+					BitmapText etiquette = new BitmapText(guiFont, false);
+					etiquette.setBox(new Rectangle(0, 0, 6, 3));
+					etiquette.setQueueBucket(Bucket.Transparent);
+					etiquette.setSize(15);
+					etiquette.setColor(ColorRGBA.Red);
+					rootNode.attachChild(etiquette);
+					
 					cam.lookAt(new Vector3f(0,0,0),planeSelected.getWorldTranslation());
+					
 				} 
 			}
 			
@@ -317,46 +331,6 @@ public class EarthTest extends SimpleApplication
 
 			vec1 = vec2;		
 		}
-	}
-	public void directionPlane(Spatial s,RealTimeFlight r,boolean newS)
-	{
-		chLat = r.getLatitude();
-		chLong = r.getLongitude();
-		oldVect = geoCoordTo3dCoord(chLat,chLong);
-		if(newS)
-		{
-			s.setLocalScale(0.03f);
-			r.addSpatial(s);
-			listPlaneRf.put(s,r);	
-			PlanesNode.attachChild(s);	
-			r.getPath().addPos(r);
-		}/*
-		else
-		{
-			s.setLocalTranslation(0,0,0);
-		}*/
-		s.setLocalTranslation(oldVect);
-		//s.move(oldVect);
-		s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
-		s.rotate((float)Math.PI/2,0,0);
-		s.rotate(0,0,(float)Math.toRadians(r.getDirection()));
-		//s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
-		s.rotate(0,r.getDirection(),0);
-		Vector3f up = s.getLocalRotation().mult(new Vector3f(0,-1.0f,0));
-		s.move(up.mult(0.05f));
-		
-		//s.rotate(0,r.getDirection(),0);
-
-		
-		/*
-		s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
-		s.rotate((float)Math.PI/2,0,0);
-		s.rotate(0,0,r.getDirection());
-		r.getPath().addPos(r);
-		Vector3f up = s.getLocalRotation().mult(new Vector3f(0,-1.0f,0));
-		//s.move(up);
-		//s.rotate(0,0,r.getDirection());
-		 */
 	}
 	public void displayAirportPays(Pays pays)
 	{
@@ -487,6 +461,26 @@ public class EarthTest extends SimpleApplication
 			selectionPlane = s;
 		}
 	}
+	public void directionPlane(Spatial s,RealTimeFlight r,boolean newS)
+	{
+		chLat = r.getLatitude();
+		chLong = r.getLongitude();
+		oldVect = geoCoordTo3dCoord(chLat,chLong);
+		if(newS)
+		{
+			s.setLocalScale(0.03f);
+			r.addSpatial(s);
+			listPlaneRf.put(s,r);	
+			PlanesNode.attachChild(s);	
+			r.getPath().addPos(r);
+		}
+		s.setLocalTranslation(oldVect);
+		s.lookAt(new Vector3f(0,0,0), new Vector3f(0,1,0));
+		s.rotate((float)Math.PI/2,0.0f,0.0f);
+		s.rotate(0,(float)Math.toRadians(r.getDirection()),0);
+		Vector3f up = s.getLocalRotation().mult(new Vector3f(0,-1f,0));
+		s.move(up.mult(0.05f));
+	}
 	public void updateEarth()
 	{
 		updatePositions();
@@ -515,7 +509,7 @@ public class EarthTest extends SimpleApplication
 					float chLatDest = a.getLatitude();
 					float chLongDest = a. getLongitude();
 					s = r.getSpatial();
-
+					/*
 					if( (chLat == chLatDest && chLong == chLongDest)
 							||(r.getPositionSol()) )
 					{
@@ -531,7 +525,9 @@ public class EarthTest extends SimpleApplication
 					{
 						oldVect = geoCoordTo3dCoord(chLat,chLong);
 						directionPlane(s,r,false);
-					}	
+					}	*/
+					oldVect = geoCoordTo3dCoord(chLat,chLong);
+					directionPlane(s,r,false);
 				}
 			}
 		}	
