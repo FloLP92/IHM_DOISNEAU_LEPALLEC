@@ -51,6 +51,7 @@ public class EarthTest extends SimpleApplication
 	private Spatial selectionPlane = null;
 	private Material colorRed;
 	private Material colorBlue;
+	private Material colorGreen;
 	//private HashMap<>
 	
 	@Override
@@ -78,6 +79,9 @@ public class EarthTest extends SimpleApplication
 		colorBlue = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
 		colorBlue.getAdditionalRenderState().setLineWidth(4.0f);
 		colorBlue.setColor("Color", ColorRGBA.Blue);
+		colorGreen = new Material(assetManager,"Common/MatDefs/Misc/Unshaded.j3md");
+		colorGreen.getAdditionalRenderState().setLineWidth(4.0f);
+		colorGreen.setColor("Color", ColorRGBA.Green);
 		
 		listPlaneRf = new HashMap<>();
 		
@@ -393,7 +397,82 @@ public class EarthTest extends SimpleApplication
 		}
 	 }
 	
+	public void displayPlaneFrom(Airport a){
+		for (HashMap.Entry<String,Flight> entry : MainSystem.getListFlight().entrySet()){
+			if(entry.getValue().getAirportDepart().equals(a)){ //Si il ne fait pas partie des vols du pays de depart
+				
+				RealTimeFlight r = MainSystem.getRealTimeFlight().get(entry.getValue().getId());
+				if(r != null){
+					Spatial s = assetManager.loadModel("earth/plane.obj");
+				    DirectionalLight sun = new DirectionalLight();
+				    sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
+				    s.addLight(sun);
+					s.setMaterial(colorGreen);
+					directionPlane(s, r, true);
+				}
+			}
+			/*else{
+				RealTimeFlight r = MainSystem.getRealTimeFlight().get(entry.getValue().getId());
+				if(r != null){
+					Spatial s = r.getSpatial();
+					r.removeSpatial();
+					PlanesNode.detachChild(s);
+					
+				}
+					
+			}*/
+		}
+	}
 	
+	public void displayPlaneFrom(Pays p){
+		for (HashMap.Entry<String,Flight> entry : MainSystem.getListFlight().entrySet()){
+			if(entry.getValue().getAirportDepart().getPays().equals(p)){ //Si il ne fait pas partie des vols du pays de depart
+				
+				RealTimeFlight r = MainSystem.getRealTimeFlight().get(entry.getValue().getId());
+				if(r != null){
+					Spatial s = assetManager.loadModel("earth/plane.obj");
+				    DirectionalLight sun = new DirectionalLight();
+				    sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
+				    s.addLight(sun);
+					s.setMaterial(colorGreen);
+					directionPlane(s, r, true);
+				}
+			}
+		}
+	}
+	public void displayPlaneTo(Airport a){
+		for (HashMap.Entry<String,Flight> entry : MainSystem.getListFlight().entrySet()){
+			if(entry.getValue().getAirportDest().equals(a)){ //Si il ne fait pas partie des vols du pays de depart
+				
+				RealTimeFlight r = MainSystem.getRealTimeFlight().get(entry.getValue().getId());
+				if(r != null){
+					Spatial s = assetManager.loadModel("earth/plane.obj");
+				    DirectionalLight sun = new DirectionalLight();
+				    sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
+				    s.addLight(sun);
+					s.setMaterial(colorGreen);
+					directionPlane(s, r, true);
+				}
+			}
+		}
+	}
+	
+	public void displayPlaneTo(Pays p){
+		for (HashMap.Entry<String,Flight> entry : MainSystem.getListFlight().entrySet()){
+			if(entry.getValue().getAirportDest().getPays().equals(p)){ //Si il ne fait pas partie des vols du pays de depart
+				
+				RealTimeFlight r = MainSystem.getRealTimeFlight().get(entry.getValue().getId());
+				if(r != null){
+					Spatial s = assetManager.loadModel("earth/plane.obj");
+				    DirectionalLight sun = new DirectionalLight();
+				    sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
+				    s.addLight(sun);
+					s.setMaterial(colorGreen);
+					directionPlane(s, r, true);
+				}
+			}
+		}
+	} 
 	public void selectionColor(Spatial s)
 	{
 		if(selectionPlane == null)

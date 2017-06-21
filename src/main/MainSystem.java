@@ -310,7 +310,9 @@ public class MainSystem
 		JLabel typeVol = new JLabel("Type vol :");
 		ButtonGroup radioButtons = new ButtonGroup();
 		JRadioButton entrants = new JRadioButton("entrants");
+		entrants.setActionCommand("entrants");
 		JRadioButton sortants = new JRadioButton("sortants");
+		entrants.setActionCommand("sortants");
 		radioButtons.add(entrants);
 		radioButtons.add(sortants);
 		
@@ -404,12 +406,21 @@ public class MainSystem
 				{
 					public Object call() throws Exception
 					{
-						if(innerAero.getSelectedItem().equals(" Aucun Aeroport selectionne"))
+						if(innerAero.getSelectedItem().equals(" Aucun Aeroport selectionne")){
 							app.displayAirportPays(paysSelection);
+							if(radioButtons.getSelection().getActionCommand().equals("entrants"))
+								app.displayPlaneFrom(paysSelection);
+							else
+								app.displayPlaneTo(paysSelection);
+						}
 						else{
 							Airport airportSelected = listAirports.get(innerAero.getSelectedItem());
 							System.out.println(innerAero.getSelectedIndex());
 							app.displayAirportPays(airportSelected);
+							if(radioButtons.getSelection().getActionCommand().equals("entrants"))
+								app.displayPlaneFrom(airportSelected);
+							else
+								app.displayPlaneTo(airportSelected);
 						}
 							return null;
 						
