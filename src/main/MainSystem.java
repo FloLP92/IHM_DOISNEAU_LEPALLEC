@@ -5,6 +5,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -172,11 +173,19 @@ public class MainSystem
 		panelLecture.setPreferredSize(new Dimension(400,200));
 		
 		JLabel statut = new JLabel("Statut :");
+		statut.setFont(new Font("Tahoma", Font.BOLD, 12));
 		JButton lectureAction = new JButton(new ImageIcon("ressources/play_icon.png"));
+		lectureAction.setBackground(new Color(59, 89, 182));
+		lectureAction.setForeground(Color.WHITE);
+		lectureAction.setFocusPainted(false);
+		lectureAction.setFont(new Font("Tahoma", Font.BOLD, 12));
 		JLabel lectureStatut = new JLabel("Reprendre la lecture");
+		lectureStatut.setFont(new Font("Tahoma", Font.BOLD, 12));
 		final int vitesseMin = 1;
 		final int vitesseMax = 10;
 		JSlider vitesseLecture = new JSlider(JSlider.HORIZONTAL,vitesseMin,vitesseMax,vitesseMin);
+		vitesseLecture.setFont(new Font("Tahoma", Font.BOLD, 12));
+		vitesseLecture.setForeground(new Color(59, 89, 182));
 		vitesseLecture.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) 
@@ -254,15 +263,24 @@ public class MainSystem
 		panelAvion.setPreferredSize(new Dimension(400,200));
 
 		JLabel jlab = new JLabel("Selectionnez un avion :");
+		jlab.setFont(new Font("Tahoma", Font.BOLD, 12));
 		infosAvion = new JTextArea("Ici apparaitera les informations sur l'avion selectionne ...");
 		infosAvion.setWrapStyleWord(true);
+		infosAvion.setFont(new Font("Tahoma", Font.BOLD, 12));
 		JComboBox j = new JComboBox();
+		j.setBackground(new Color(59, 89, 182));
+		j.setForeground(Color.WHITE);
+		j.setFont(new Font("Tahoma", Font.BOLD, 12));
 		j.addItem(" Aucun Avion selectionne");
 		for (HashMap.Entry<String,Flight> entry : listFlights.entrySet()){
 			j.addItem(""+entry.getKey());
 		}
 		j = trierCombo(j);
 		JButton vue = new JButton(new ImageIcon("ressources/view_icon.png"));
+		vue.setBackground(new Color(59, 89, 182));
+		vue.setForeground(Color.WHITE);
+		vue.setFocusPainted(false);
+		vue.setFont(new Font("Tahoma", Font.BOLD, 12));
 		j.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -284,24 +302,26 @@ public class MainSystem
 		gbc1.ipadx = 80;
 		gbc1.gridwidth = 1;
 		gbc1.gridheight = 1;
+		gbc1.fill = GridBagConstraints.HORIZONTAL;
 		gbc1.insets = new Insets(10,10,10,10);
 		panelAvion.add(jlab,gbc1);
 		gbc1.gridy=1;
-		gbc1.fill = GridBagConstraints.HORIZONTAL;
 		panelAvion.add(j,gbc1);
 		gbc1.gridheight = 1;
 		gbc1.gridwidth=3;
 		gbc1.gridy=2;
-		gbc1.weightx = 1;
+		gbc1.fill = GridBagConstraints.VERTICAL;
+		gbc1.weightx = 3;
 		gbc1.weighty = 3;
 		panelAvion.add(infosAvion,gbc1);
 		gbc1.fill = GridBagConstraints.NONE;
 		gbc1.gridy=5;
-		gbc1.gridx=1;
+		gbc1.gridx=0;
 		gbc1.gridwidth=1;
 		panelAvion.add(vue,gbc1);
 		panelAvion.setBorder(BorderFactory.createTitledBorder(
 	                "Selection Avion"));
+		
 		//Partie Filtrer vols
 		JPanel panelVols = new JPanel(new GridBagLayout());
 		panelVols.setPreferredSize(new Dimension(400,300));
@@ -309,22 +329,34 @@ public class MainSystem
 		
 		JLabel typeVol = new JLabel("Type vol :");
 		ButtonGroup radioButtons = new ButtonGroup();
+		
 		JRadioButton entrants = new JRadioButton("entrants");
+		entrants.setFocusPainted(false);
+		entrants.setFont(new Font("Tahoma", Font.BOLD, 12));
 		entrants.setActionCommand("entrants");
 		JRadioButton sortants = new JRadioButton("sortants");
+		sortants.setFocusPainted(false);
+		sortants.setFont(new Font("Tahoma", Font.BOLD, 12));
 		entrants.setActionCommand("sortants");
 		radioButtons.add(entrants);
 		radioButtons.add(sortants);
 		
 		JComboBox aeroportSelected = new JComboBox();
+		aeroportSelected.setBackground(new Color(59, 89, 182));
+		aeroportSelected.setForeground(Color.WHITE);
+		aeroportSelected.setFont(new Font("Tahoma", Font.BOLD, 12));
 		final JComboBox innerAero = aeroportSelected; //Duplication pour etre utilise dans les listeners
 		aeroportSelected.addItem(" Aucun Aeroport selectionne");
 		for (HashMap.Entry<String,Airport> entry : listAirports.entrySet()){
 			aeroportSelected.addItem(""+entry.getKey());
 		}
 		aeroportSelected = trierCombo(aeroportSelected);
+		aeroportSelected.setSelectedItem(" Aucun Aeroport selectionne");
 		
 		JComboBox paysSelected = new JComboBox();
+		paysSelected.setBackground(new Color(59, 89, 182));
+		paysSelected.setForeground(Color.WHITE);
+		paysSelected.setFont(new Font("Tahoma", Font.BOLD, 12));
 		final JComboBox innerPays = paysSelected; //Duplication pour etre utilise dans les listeners
 		paysSelected.addItem(" Aucun Pays selectionne");
 		ArrayList <String> aeroportsEnCours = new ArrayList<String>();
@@ -367,7 +399,15 @@ public class MainSystem
 		 });
 		
 		JButton appliquerFiltre = new JButton("Appliquer le filtre");
+		appliquerFiltre.setBackground(new Color(59, 89, 182));
+		appliquerFiltre.setForeground(Color.WHITE);
+		appliquerFiltre.setFocusPainted(false);
+		appliquerFiltre.setFont(new Font("Tahoma", Font.BOLD, 12));
 		JButton annulerFiltre = new JButton("Annuler le filtre");
+		annulerFiltre.setBackground(new Color(59, 89, 182));
+		annulerFiltre.setForeground(Color.WHITE);
+		annulerFiltre.setFocusPainted(false);
+		annulerFiltre.setFont(new Font("Tahoma", Font.BOLD, 12));
 		
 		
 		gbc2.gridx = 0;
@@ -410,7 +450,7 @@ public class MainSystem
 							app.displayAirportPays(paysSelection);
 							if(radioButtons.getSelection().getActionCommand().equals("entrants"))
 								app.displayPlaneFrom(paysSelection);
-							else
+							else if(radioButtons.getSelection().getActionCommand().equals("sortants"))
 								app.displayPlaneTo(paysSelection);
 						}
 						else{
@@ -419,7 +459,7 @@ public class MainSystem
 							app.displayAirportPays(airportSelected);
 							if(radioButtons.getSelection().getActionCommand().equals("entrants"))
 								app.displayPlaneFrom(airportSelected);
-							else
+							else if(radioButtons.getSelection().getActionCommand().equals("sortants"))
 								app.displayPlaneTo(airportSelected);
 						}
 							return null;
